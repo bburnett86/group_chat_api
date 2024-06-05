@@ -28,16 +28,17 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :users, only: %i[index show update] do
-        post 'activate', on: :member
-        post 'deactivate', on: :member
+        patch 'activate', on: :member
+        patch 'deactivate', on: :member
+        get 'following', to: 'users#following'
+        get 'followers', to: 'users#followers'
         get 'following_count', to: 'users#following_count'
         get 'followers_count', to: 'users#followers_count'
-        resources :following, only: %i[index create update destroy]
-        resources :followers, only: %i[index update destroy]
         resources :posts
         resources :events
         resources :clubs
       end
+      resources :follows, only: %i[create destroy]
       resources :posts do
         resources :post_likes, only: %i[index create destroy]
         resources :comments, only: %i[create edit destroy] do

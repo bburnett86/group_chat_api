@@ -29,14 +29,4 @@ class User < ApplicationRecord
 
   # User has many following_users through Follows. This is the users FOLLOWING the user
   has_many :following_users, through: :followers, source: :following_user
-
-  # Returns followed users count
-  def followed_users_count(id)
-    User.find(id).followed_users.count
-  end
-
-  # Returns following users count
-  def following_users_count
-    User.find(id).following_users.count
-  end
 end
