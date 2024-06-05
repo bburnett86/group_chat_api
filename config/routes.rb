@@ -27,11 +27,13 @@ Rails.application.routes.draw do
   # Defines routes for the API
   namespace :api do
     namespace :v1 do
-      resources :user do
-        get 'following_count', to: 'accounts#following_count'
-        get 'followers_count', to: 'accounts#followers_count'
-        resources :following, only: %i[index create edit destroy]
-        resources :followers, only: %i[index destroy]
+      resources :users, only: %i[index show update] do
+        post 'activate', on: :member
+        post 'deactivate', on: :member
+        get 'following_count', to: 'users#following_count'
+        get 'followers_count', to: 'users#followers_count'
+        resources :following, only: %i[index create update destroy]
+        resources :followers, only: %i[index update destroy]
         resources :posts
         resources :events
         resources :clubs
