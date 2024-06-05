@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  followed_user_id: MyString
+  following_user_id: MyString
+  followed_user_inner_circle: false
+
+two:
+  followed_user_id: MyString
+  following_user_id: MyString
+  followed_user_inner_circle: false
