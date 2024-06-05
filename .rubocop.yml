@@ -1,0 +1,7 @@
+Layout/IndentationWidth:
+  # Number of spaces for each indentation level.
+  Width: 2
+
+Layout/Tab:
+  # No hard tabs.
+  Enabled: true

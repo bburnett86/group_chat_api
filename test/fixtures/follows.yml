@@ -1,9 +1,11 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  following_user_id: e5a4c27d-f5db-4e56-b369-0c3674eab637
-  followed_user_id: 1d955636-d703-44b8-9852-132952a1b8b2
+  #   id: "b468ac15-2ac3-490c-840c-36511e687e8d"
+  #   following_user_id: e5a4c27d-f5db-4e56-b369-0c3674eab637
+  #   followed_user_id: 1d955636-d703-44b8-9852-132952a1b8b2
 
-two:
+  # two:
+  id: a7750c43-6307-4e10-a217-d82d7cae6d24
   following_user_id: 1d955636-d703-44b8-9852-132952a1b8b2
   followed_user_id: e5a4c27d-f5db-4e56-b369-0c3674eab637
