@@ -10,6 +10,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     @following_user = users(:two) # Assuming you have a fixture for users
     @user.update_attribute(:active, true)
     @following_user.update_attribute(:active, false)
+    @user.update_attribute(:bio, "Old Bio")
     @user.update_attribute(:role, 'ADMIN') # Make the user an admin
     sign_in @user
   end
@@ -24,7 +25,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should update user' do
-    patch api_v1_user_url(@user), params: { user: { username: 'New Name' } }
+    patch api_v1_user_url(@user), params: { user: { bio: 'New Bio' } }
     assert_response :success
   end
 
@@ -32,14 +33,14 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   	patch activate_api_v1_user_url(@user)
     @user.reload
     assert_response :success
-  	assert_equal true, User.find(@user.id).active
+  	assert_equal true, @user.active
   end
 
   test 'should deactivate user' do
   	patch deactivate_api_v1_user_url(@following_user)
     @following_user.reload
     assert_response :success
-  	assert_equal false, User.find(@following_user.id).active
+  	assert_equal false, @following_user.active
   end
 
   test 'should get followers count' do

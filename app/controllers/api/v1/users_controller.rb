@@ -23,7 +23,7 @@ class Api::V1::UsersController < ApplicationController
   def update
     user = User.find(params[:id])
     user.update(update_user_params)
-    render json: { user:, message: 'User updated' }
+    render json: user
   end
 
   def activate

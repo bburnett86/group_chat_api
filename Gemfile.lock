@@ -315,7 +315,6 @@ DEPENDENCIES
   rubocop-rspec
   rubocop-shopify
   rubocop-thread_safety
-  ruby-lsp
   ruby-lsp-rails (~> 0.3.7)
   tzinfo-data
 
