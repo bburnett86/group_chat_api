@@ -6,8 +6,8 @@
 class CreateFollows < ActiveRecord::Migration[7.1]
   def change
     create_table :follows, id: :uuid do |t|
-      t.uuid :following_user_id
-      t.uuid :followed_user_id
+      t.references :following_user, type: :uuid, foreign_key: { to_table: :users }
+      t.references :followed_user, type: :uuid, foreign_key: { to_table: :users }
 
       t.timestamps
     end
