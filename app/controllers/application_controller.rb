@@ -7,9 +7,16 @@ class ApplicationController < ActionController::API
 
   protected
 
+  def authenticate_user!
+    render json: { error: 'Not authorized' }, status: :unauthorized unless user_signed_in?
+  end
+
   def check_admin
-    render json: { error: 'Not authorized' }, status: :unauthorized unless
-    %w[ADMIN SUPERADMIN].include?(current_user.role)
+    if current_user && (current_user.admin? || current_user.superadmin?)
+      return
+    else
+      render json: { error: 'Not authorized' }, status: :unauthorized
+    end
   end
 
   def configure_permitted_parameters

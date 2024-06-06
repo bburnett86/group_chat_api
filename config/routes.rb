@@ -28,6 +28,10 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :users, only: %i[index show update] do
+        collection do
+          patch :admin_update_role_bulk
+        end
+        patch 'admin_user_update', on: :member
         patch 'activate', on: :member
         patch 'deactivate', on: :member
         get 'following', to: 'users#following'
@@ -58,4 +62,5 @@ Rails.application.routes.draw do
       resource :posts, only: [:index]
     end
   end
+
 end

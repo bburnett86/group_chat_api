@@ -3,13 +3,12 @@
 # The User class represents a user in the application. It contains methods for
 # validating user data, handling password encryption, and managing user roles.
 class User < ApplicationRecord
-  self.primary_key = 'id'
-
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
-  validates :username, uniqueness: true, length: { in: 5..30 }
-  validates :role, inclusion: { in: %w[STANDARD ADMIN SUPERADMIN] }
+  validates :username, presence: true, uniqueness: true, length: { in: 5..30 }
   validates :avatar_url, format: { with: URI::DEFAULT_PARSER.make_regexp }
   validates :active, inclusion: { in: [true, false] }
+
+  enum role: { standard: 'STANDARD', admin: 'ADMIN', superadmin: 'SUPERADMIN' }
 
   include Devise::JWT::RevocationStrategies::JTIMatcher
   # Include default devise modules. Others available are:
