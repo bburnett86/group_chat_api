@@ -1,5 +1,6 @@
 class Api::V1::PostsController < ApplicationController
   before_action :authenticate_user!
+
   before_action :set_post, only: [:show, :update, :destroy]
   before_action :authorize_user!, only: [:update, :destroy]
 
@@ -45,6 +46,6 @@ class Api::V1::PostsController < ApplicationController
 	end
 
   def post_params
-    params.require(:post).permit(:title, :content)
+    params.require(:post).permit(:description, :close_friends)
   end
 end

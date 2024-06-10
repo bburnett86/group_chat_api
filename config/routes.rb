@@ -38,7 +38,7 @@ Rails.application.routes.draw do
         get 'followers', to: 'users#followers'
         get 'following_count', to: 'users#following_count'
         get 'followers_count', to: 'users#followers_count'
-        resources :posts
+        resources :posts, only: %i[index]
         resources :events
         resources :clubs
       end
