@@ -6,7 +6,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     container:
-      image: ruby:2.6.5
+      image: ruby:3.0.2
 
     services:
       postgres:
@@ -39,7 +39,7 @@ jobs:
       env:
         RAILS_ENV: test
       run: |
-        gem install bundler
+        gem install bundler -v 2.5.11
         bundle install --jobs 4 --retry 3 --path vendor/bundle
     - name: Install yarn
       run: npm install -g yarn
