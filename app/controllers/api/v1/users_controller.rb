@@ -5,70 +5,63 @@
 # deactivate a user, and get the follower count of a user.
 class Api::V1::UsersController < ApplicationController
   before_action :authenticate_user!
-  before_action :check_admin, only: %i[index activate deactivate]
+  before_action :check_admin, only: [:index, :activate, :deactivate, :admin_user_update]
+  before_action :set_user, only: [:show, :update, :activate, :deactivate, :admin_user_update]
 
   def index
     render json: User.all
   end
 
   def show
-    user = User.find(params[:id])
-    render json: {
-      user:,
-      followers: user.followers.count,
-      following: user.followed_users.count
-    }
+    render json: @user
   end
 
   def update
-    user = User.find(params[:id])
-    user.update(update_user_params)
-    render json: user
+    @user.update!(update_user_params)
+    render json: @user
   end
 
   def activate
-    user = User.find(params[:id])
-    if user && user.active
-      user.update(active: true)
-      render json: user
+    if @user.active
+      render json: { error: 'User is already active' }, status: :bad_request
     else
-      render json: { error: 'User not found or already active' }, status: :bad_request
+      @user.update!(active: true)
+      render json: @user
     end
   end
 
   def deactivate
-    user = User.find(params[:id])
-    if user && !user.active
-      user.update(active: false)
-      render json: user
+    if !@user.active
+      render json: { error: 'User is already inactive' }, status: :bad_request
     else
-      render json: { error: 'User not found or already inactive' }, status: :bad_request
+      @user.update!(active: false)
+      render json: @user
     end
   end
 
-  def following
-    user = User.find(params[:user_id])
-    render json: user.followed_users
+  def admin_user_update
+    @user.update!(admin_user_update_params)
+    render json: @user
   end
 
-  def followers
-    user = User.find(params[:user_id])
-    render json: user.followers
-  end
-
-  def followers_count
-    user = User.find(params[:user_id])
-    render json: user.followers.count
-  end
-
-  def following_count
-    user = User.find(params[:user_id])
-    render json: user.followed_users.count
+  def admin_update_role_bulk
+    params[:user_role_pairs].each do |user_role_pair|
+      User.find(user_role_pair[:user_id]).update!(role: user_role_pair[:role])
+    end
+    render json: { message: 'Roles updated successfully' }
   end
 
   private
 
+  def set_user
+    @user = User.find(params[:id])
+  end
+
   def update_user_params
-    params.require(:user).permit(:username, :bio, :avatar_url, :show_email, :active, :role)
+    params.require(:user).permit(:username, :show_email, :bio, :avatar_url)
+  end
+
+  def admin_user_update_params
+    params.require(:user).permit(:username, :role, :active, :show_email, :bio, :avatar_url)
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FollowsControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
 
