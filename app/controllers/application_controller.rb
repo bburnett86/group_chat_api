@@ -12,11 +12,9 @@ class ApplicationController < ActionController::API
   end
 
   def check_admin
-    if current_user && (current_user.admin? || current_user.superadmin?)
-      return
-    else
-      render json: { error: 'Not authorized' }, status: :unauthorized
-    end
+    return if current_user && (current_user.admin? || current_user.superadmin?)
+
+    render json: { error: 'Not authorized' }, status: :unauthorized
   end
 
   def configure_permitted_parameters

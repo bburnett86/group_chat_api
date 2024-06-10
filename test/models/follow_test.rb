@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # test/models/follow_test.rb
 require 'test_helper'
 
@@ -26,7 +28,8 @@ class FollowTest < ActiveSupport::TestCase
     duplicate_follow = @follow.dup
     @follow.save
     refute duplicate_follow.valid?, 'follow is valid with a duplicate following_user_id and followed_user_id'
-    assert_not_nil duplicate_follow.errors[:following_user_id], 'no validation error for duplicate following_user_id and followed_user_id'
+    assert_not_nil duplicate_follow.errors[:following_user_id],
+                   'no validation error for duplicate following_user_id and followed_user_id'
   end
 
   test 'belongs to following_user' do

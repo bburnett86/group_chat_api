@@ -6,8 +6,8 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   def setup
     @user = users(:one) # Assuming you have a fixture for users
     @following_user = users(:two) # Assuming you have a fixture for users
-    @user.update!(active: true, role: :superadmin, bio: "user_1_bio") # Make the user an admin
-    @following_user.update!(active: false, role: :standard, bio: "user_2_bio")
+    @user.update!(active: true, role: :superadmin, bio: 'user_1_bio') # Make the user an admin
+    @following_user.update!(active: false, role: :standard, bio: 'user_2_bio')
     sign_in @user
   end
 
@@ -56,7 +56,8 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should update user as admin' do
-    patch admin_user_update_api_v1_user_url(@user), params: { user: { username: 'New Username', role: :admin, active: true, show_email: true, bio: 'New Bio' } }
+    patch admin_user_update_api_v1_user_url(@user),
+          params: { user: { username: 'New Username', role: :admin, active: true, show_email: true, bio: 'New Bio' } }
     assert_response :success
     @user.reload
     assert_equal 'New Username', @user.username
@@ -78,5 +79,4 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'admin', @user.role
     assert_equal 'admin', @following_user.role
   end
-
 end

@@ -62,5 +62,4 @@ Rails.application.routes.draw do
       resource :posts, only: [:index]
     end
   end
-
 end

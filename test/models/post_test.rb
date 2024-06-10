@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 # test/models/post_test.rb
 require 'test_helper'
 
 class PostTest < ActiveSupport::TestCase
   def setup
     @post = posts(:one) # assuming you have a fixture named "one" in posts.yml
-		@post.update(description: "New Description")
+    @post.update(description: 'New Description')
   end
 
   test 'valid post' do

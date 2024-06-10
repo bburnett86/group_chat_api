@@ -65,6 +65,7 @@ jobs:
         PGUSER: postgres
         PGPORT: ${{ job.services.postgres.ports[5432] }}
         RAILS_ENV: test
+        DEVISE_JWT_SECRET_KEY: ${{ secrets.DEVISE_JWT_SECRET_KEY }}
       run: |
         bin/rails db:create db:schema:load
         bundle exec rails test
