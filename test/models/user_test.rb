@@ -54,4 +54,13 @@ class UserTest < ActiveSupport::TestCase
       user.destroy
     end
   end
+
+  test 'has many blocks' do
+    assert_equal @user.blocks.count, Block.where(user_id: @user.id).count
+  end
+
+  test 'has many blocked users' do
+    assert_equal @user.blocked_users.count, Block.where(user_id: @user.id).count
+  end
+
 end

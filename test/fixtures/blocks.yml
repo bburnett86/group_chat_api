@@ -1,0 +1,13 @@
+# test/fixtures/blocks.yml
+
+one:
+  id: b468ac15-2ac3-490c-840c-36511e687e8d
+  user_id: e5a4c27d-f5db-4e56-b369-0c3674eab637
+  blocked_user_id: 1d955636-d703-44b8-9852-132952a1b8b2
+  blocked: true
+
+two:
+  id: a7750c43-6307-4e10-a217-d82d7cae6d24
+  user_id: 1d955636-d703-44b8-9852-132952a1b8b2
+  blocked_user_id: e5a4c27d-f5db-4e56-b369-0c3674eab637
+  blocked: false
