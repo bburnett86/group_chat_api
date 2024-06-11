@@ -18,7 +18,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_10_194549) do
   create_table "blocks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "user_id", null: false
     t.uuid "blocked_user_id", null: false
-    t.boolean "blocked", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["blocked_user_id"], name: "index_blocks_on_blocked_user_id"
