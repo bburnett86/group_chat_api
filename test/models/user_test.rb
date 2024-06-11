@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
-# test/models/user_test.rb
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
   def setup
-    @user = users(:one) # assuming you have a fixture named "one" in users.yml
+    @user = users(:one)
   end
 
   test 'valid user' do

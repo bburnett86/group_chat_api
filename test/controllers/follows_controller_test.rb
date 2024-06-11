@@ -4,11 +4,11 @@ class FollowsControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
 
   def setup
-    @user = users(:one) # Assuming you have a fixture for users
-    @following_user = users(:two) # Assuming you have a fixture for users
+    @user = users(:one)
+    @following_user = users(:two)
     @user.update_attribute(:active, true)
     @following_user.update_attribute(:active, false)
-    @user.update_attribute(:role, 'ADMIN') # Make the user an admin
+    @user.update_attribute(:role, 'ADMIN')
     sign_in @user
     @follow = follows(:one)
   end

@@ -5,7 +5,7 @@ require 'test_helper'
 
 class PostTest < ActiveSupport::TestCase
   def setup
-    @post = posts(:one) # assuming you have a fixture named "one" in posts.yml
+    @post = posts(:one)
     @post.update(description: 'New Description')
   end
 

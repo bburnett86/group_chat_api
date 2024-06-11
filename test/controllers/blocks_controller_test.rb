@@ -4,13 +4,14 @@ class BlocksControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
 
   setup do
-    @user = users(:one) # Assuming you have a fixture for users
-    @blocked_user = users(:two) # Assuming you have a fixture for users
+    @user = users(:one)
+    @blocked_user = users(:two)
     @user.update_attribute(:active, true)
     @blocked_user.update_attribute(:active, false)
-    @user.update_attribute(:role, 'ADMIN') # Make the user an admin
+    @user.update_attribute(:role, 'ADMIN') 
     sign_in @user
-    @block = blocks(:one) # Assuming you have a fixture for blocks
+    @block = blocks(:one)
+		@unblocked_user = users(:three)
   end
 
 	test 'should get index' do
@@ -18,10 +19,15 @@ class BlocksControllerTest < ActionDispatch::IntegrationTest
 		assert_response :success
 	end
 
-  test 'should create block' do
+  test 'should not create block if user is already blocked' do
     post api_v1_user_blocks_url(@user), params: { block: { blocked_user_id: @blocked_user.id } }
-    assert_response :success
+    assert_response :unprocessable_entity
   end
+
+	test 'should create block' do
+		post api_v1_user_blocks_url(@user), params: { block: { blocked_user_id: @unblocked_user.id } }
+		assert_response :success
+	end
 
   test 'should destroy block' do
     delete api_v1_user_block_url(@user, @block)

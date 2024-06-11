@@ -8,6 +8,7 @@ class User < ApplicationRecord
   validates :avatar_url, format: { with: URI::DEFAULT_PARSER.make_regexp }
   validates :active, inclusion: { in: [true, false] }
 
+  before_save :downcase_email
   before_destroy :destroy_blocks_with_blocked_user
 
 
@@ -36,8 +37,19 @@ class User < ApplicationRecord
   # BLOCKED USERS AND BLOCKED BY USERS
   has_many :blocks, dependent: :destroy
   has_many :blocked_users, through: :blocks
+  has_many :blocked_by, foreign_key: :blocked_user_id, class_name: 'Block', dependent: :destroy
+  has_many :blocked_by_users, through: :blocked_by, source: :user
+
+  # Return list of all user IDs that have blocked this user and this user has blocked.
+  def hidden_user_ids
+    self.blocked_users.pluck(:id) + self.blocked_by_users.pluck(:id)
+  end
 
   private
+
+  def downcase_email
+    self.email = email.downcase
+  end
 
   def destroy_blocks_with_blocked_user
     Block.where(blocked_user_id: id).destroy_all
