@@ -4,9 +4,9 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
 
   def setup
-    @user = users(:one) # Assuming you have a fixture for users
-    @following_user = users(:two) # Assuming you have a fixture for users
-    @user.update!(active: true, role: :superadmin, bio: 'user_1_bio') # Make the user an admin
+    @user = users(:one)
+    @following_user = users(:two)
+    @user.update!(active: true, role: :superadmin, bio: 'user_1_bio')
     @following_user.update!(active: false, role: :standard, bio: 'user_2_bio')
     sign_in @user
   end

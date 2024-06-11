@@ -21,3 +21,12 @@ two:
   encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>
   created_at: <%= 2.days.ago %>
   updated_at: <%= 1.day.ago %>
+
+three:
+  id: 3a7e9e1f-8e4d-4e4f-9e4c-7d8b6a5c2b1a
+  email: user_three@test.com
+  username: user_three
+  avatar_url: https://randomuser.me/api/portraits
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>
+  created_at: <%= 1.day.ago %>
+  updated_at: <%= Time.now %>

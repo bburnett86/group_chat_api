@@ -5,7 +5,7 @@ require 'test_helper'
 
 class FollowTest < ActiveSupport::TestCase
   def setup
-    @follow = follows(:one) # assuming you have a fixture named "one" in follows.yml
+    @follow = follows(:one) 
   end
 
   test 'valid follow' do
