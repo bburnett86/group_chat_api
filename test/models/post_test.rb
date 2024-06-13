@@ -34,4 +34,15 @@ class PostTest < ActiveSupport::TestCase
   test 'belongs to user' do
     assert_equal @post.user, User.find(@post.user_id)
   end
+  
+  test 'has many likes' do
+    assert_equal @post.likes.count, Like.where(likeable: @post).count
+  end
+  
+  test 'likes are destroyed when post is destroyed' do
+    post = posts(:one)
+    assert_difference 'Like.count', -post.likes.count do
+      post.destroy
+    end
+  end
 end
