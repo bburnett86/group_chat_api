@@ -45,11 +45,10 @@ Rails.application.routes.draw do
       end
       resources :follows, only: %i[create destroy]
       resources :posts do
-        resources :post_likes, only: %i[index create destroy]
+        resources :likes, only: %i[index create destroy]
         resources :comments, only: %i[create edit destroy] do
-          resources :comment_likes, only: %i[index create destroy]
+          resources :likes, only: %i[index create destroy]
         end
-        resource :post_likes, only: %i[index create destroy]
       end
       resources :events do
         resources :event_guests, only: %i[index create destroy]
