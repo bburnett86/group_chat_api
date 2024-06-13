@@ -46,6 +46,6 @@ class Api::V1::PostsController < ApplicationController
 	end
 
   def post_params
-    params.require(:post).permit(:description, :close_friends)
+    params.require(:post).permit(:description, :close_friends, :post_type)
   end
 end
