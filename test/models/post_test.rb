@@ -25,6 +25,12 @@ class PostTest < ActiveSupport::TestCase
     assert_not_nil @post.errors[:user_id], 'no validation error for user_id present'
   end
 
+  test 'invalid without type' do
+    @post.post_type = nil
+    refute @post.valid?, 'post is valid without a type'
+    assert_not_nil @post.errors[:post_type], 'no validation error for type present'
+  end
+
   test 'belongs to user' do
     assert_equal @post.user, User.find(@post.user_id)
   end

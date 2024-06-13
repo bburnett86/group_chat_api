@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_10_194549) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_13_170207) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -33,12 +33,25 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_10_194549) do
     t.index ["following_user_id"], name: "index_follows_on_following_user_id"
   end
 
+  create_table "likes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "liker_id", null: false
+    t.uuid "liked_id", null: false
+    t.string "likeable_type", null: false
+    t.uuid "likeable_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["likeable_type", "likeable_id"], name: "index_likes_on_likeable"
+    t.index ["liked_id"], name: "index_likes_on_liked_id"
+    t.index ["liker_id"], name: "index_likes_on_liker_id"
+  end
+
   create_table "posts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "description", default: ""
     t.uuid "user_id", null: false
     t.boolean "close_friends", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "post_type"
     t.index ["user_id"], name: "index_posts_on_user_id"
   end
 
@@ -75,5 +88,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_10_194549) do
   add_foreign_key "blocks", "users", column: "blocked_user_id"
   add_foreign_key "follows", "users", column: "followed_user_id"
   add_foreign_key "follows", "users", column: "following_user_id"
+  add_foreign_key "likes", "users", column: "liked_id"
+  add_foreign_key "likes", "users", column: "liker_id"
   add_foreign_key "posts", "users"
 end

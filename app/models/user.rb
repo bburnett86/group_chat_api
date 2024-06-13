@@ -8,11 +8,12 @@ class User < ApplicationRecord
   validates :avatar_url, format: { with: URI::DEFAULT_PARSER.make_regexp }
   validates :active, inclusion: { in: [true, false] }
 
-  before_save :downcase_email
+  before_save :downcase_email, :set_default_role
   before_destroy :destroy_blocks_with_blocked_user
 
-
   enum role: { standard: 'STANDARD', admin: 'ADMIN', superadmin: 'SUPERADMIN' }
+  validates :role, inclusion: { in: roles.keys, message: "%{value} is not a valid role" }
+
 
   include Devise::JWT::RevocationStrategies::JTIMatcher
   # Include default devise modules. Others available are:
@@ -39,10 +40,17 @@ class User < ApplicationRecord
   has_many :blocked_users, through: :blocks
   has_many :blocked_by, foreign_key: :blocked_user_id, class_name: 'Block', dependent: :destroy
   has_many :blocked_by_users, through: :blocked_by, source: :user
+  has_many :likes_as_liker, class_name: 'Like', foreign_key: 'liker_id', dependent: :destroy
+  has_many :likes_as_liked, class_name: 'Like', foreign_key: 'liked_id', dependent: :destroy
 
   # Return list of all user IDs that have blocked this user and this user has blocked.
   def hidden_user_ids
     self.blocked_users.pluck(:id) + self.blocked_by_users.pluck(:id)
+  end
+
+  # If user role is not equal to a value in the roles hash, set the role to 'STANDARD'.
+  def set_default_role
+    self.role ||= :standard
   end
 
   private

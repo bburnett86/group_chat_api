@@ -29,6 +29,12 @@ class UserTest < ActiveSupport::TestCase
     assert_not_nil @user.errors[:username], 'no validation error for username length'
   end
 
+  test 'invalid without role' do
+    @user.role = nil
+    refute @user.valid?, 'user is valid without a role'
+    assert_not_nil @user.errors[:role], 'no validation error for role present'
+  end
+
   test 'invalid without active' do
     @user.active = nil
     refute @user.valid?, 'user is valid without an active status'
