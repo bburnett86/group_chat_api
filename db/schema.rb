@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_13_170207) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_13_203427) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -22,6 +22,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_13_170207) do
     t.datetime "updated_at", null: false
     t.index ["blocked_user_id"], name: "index_blocks_on_blocked_user_id"
     t.index ["user_id"], name: "index_blocks_on_user_id"
+  end
+
+  create_table "comments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "description", null: false
+    t.uuid "post_id", null: false
+    t.uuid "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["post_id"], name: "index_comments_on_post_id"
+    t.index ["user_id"], name: "index_comments_on_user_id"
   end
 
   create_table "follows", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -86,6 +96,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_13_170207) do
 
   add_foreign_key "blocks", "users"
   add_foreign_key "blocks", "users", column: "blocked_user_id"
+  add_foreign_key "comments", "posts"
+  add_foreign_key "comments", "users"
   add_foreign_key "follows", "users", column: "followed_user_id"
   add_foreign_key "follows", "users", column: "following_user_id"
   add_foreign_key "likes", "users", column: "liked_id"

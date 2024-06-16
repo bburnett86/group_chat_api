@@ -45,4 +45,15 @@ class PostTest < ActiveSupport::TestCase
       post.destroy
     end
   end
+
+  test 'has many comments' do
+    assert_equal @post.comments.count, Comment.where(post_id: @post.id).count
+  end
+  
+  test 'comments are destroyed when post is destroyed' do
+    post = posts(:one)
+    assert_difference 'Comment.count', -post.comments.count do
+      post.destroy
+    end
+  end
 end

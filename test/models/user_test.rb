@@ -109,4 +109,15 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
+  test 'has many comments' do
+    assert_equal @user.comments.count, Comment.where(user_id: @user.id).count
+  end
+  
+  test 'comments are destroyed when user is destroyed' do
+    user = users(:one)
+    assert_difference 'Comment.count', -user.comments.count do
+      user.destroy
+    end
+  end
+
 end
