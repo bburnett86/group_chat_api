@@ -42,6 +42,7 @@ class User < ApplicationRecord
   has_many :blocked_by_users, through: :blocked_by, source: :user
   has_many :likes_as_liker, class_name: 'Like', foreign_key: 'liker_id', dependent: :destroy
   has_many :likes_as_liked, class_name: 'Like', foreign_key: 'liked_id', dependent: :destroy
+  has_many :comments, dependent: :destroy
 
   # Return list of all user IDs that have blocked this user and this user has blocked.
   def hidden_user_ids

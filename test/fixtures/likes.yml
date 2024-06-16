@@ -3,7 +3,7 @@
 one:
   liker_id: 1d955636-d703-44b8-9852-132952a1b8b2
   liked_id: e5a4c27d-f5db-4e56-b369-0c3674eab637
-  likeable_id: e5a4c27d-f5db-4e56-b369-0c3674eab637
+  likeable_id: 5a7e9e1f-8e4d-4e4f-9e4c-7d8b6a5c2b1a
   likeable_type: Post
   created_at: <%= 1.day.ago %>
   updated_at: <%= 12.hours.ago %>
@@ -11,7 +11,7 @@ one:
 two:
   liker_id: 3a7e9e1f-8e4d-4e4f-9e4c-7d8b6a5c2b1a
   liked_id: e5a4c27d-f5db-4e56-b369-0c3674eab637
-  likeable_id: 1d955636-d703-44b8-9852-132952a1b8b2
+  likeable_id: 6a7e9e1f-8e4d-4e4f-9e4c-7d8b6a5c2b1a
   likeable_type: Post
   created_at: <%= 1.day.ago %>
   updated_at: <%= 12.hours.ago %>
@@ -19,7 +19,7 @@ two:
 three:
   liker_id: e5a4c27d-f5db-4e56-b369-0c3674eab637
   liked_id: 1d955636-d703-44b8-9852-132952a1b8b2
-  likeable_id: 3a7e9e1f-8e4d-4e4f-9e4c-7d8b6a5c2b1a
+  likeable_id: 7a7e9e1f-8e4d-4e4f-9e4c-7d8b6a5c2b1a
   likeable_type: Post
   created_at: <%= 1.day.ago %>
   updated_at: <%= 12.hours.ago %>
@@ -27,7 +27,7 @@ three:
 four:
   liker_id: 3a7e9e1f-8e4d-4e4f-9e4c-7d8b6a5c2b1a
   liked_id: 1d955636-d703-44b8-9852-132952a1b8b2
-  likeable_id: e5a4c27d-f5db-4e56-b369-0c3674eab637
+  likeable_id: 8a7e9e1f-8e4d-4e4f-9e4c-7d8b6a5c2b1a
   likeable_type: Post
   created_at: <%= 1.day.ago %>
   updated_at: <%= 12.hours.ago %>
