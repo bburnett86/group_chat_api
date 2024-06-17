@@ -31,13 +31,13 @@ Rails.application.routes.draw do
         collection do
           patch :admin_update_role_bulk
         end
-        patch 'admin_user_update', on: :member
-        patch 'activate', on: :member
-        patch 'deactivate', on: :member
-        get 'following', to: 'users#following'
-        get 'followers', to: 'users#followers'
-        get 'following_count', to: 'users#following_count'
-        get 'followers_count', to: 'users#followers_count'
+        member do
+          patch 'admin_user_update'
+          patch 'activate'
+          patch 'deactivate'
+          get 'following'
+          get 'followers'
+        end
         resources :blocks, only: %i[index create destroy]
         resources :posts, only: %i[index]
         resources :events
@@ -46,7 +46,7 @@ Rails.application.routes.draw do
       resources :follows, only: %i[create destroy]
       resources :posts do
         resources :likes, only: %i[index create destroy]
-        resources :comments, only: %i[create edit destroy] do
+        resources :comments, only: %i[create update destroy] do
           resources :likes, only: %i[index create destroy]
         end
       end
@@ -59,7 +59,6 @@ Rails.application.routes.draw do
         resources :club_members
         resources :club_forums
       end
-      resource :posts, only: [:index]
     end
   end
 end

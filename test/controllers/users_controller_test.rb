@@ -8,6 +8,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     @following_user = users(:two)
     @user.update!(active: true, role: :superadmin, bio: 'user_1_bio')
     @following_user.update!(active: false, role: :standard, bio: 'user_2_bio')
+    @follow = Follow.create!(following_user_id: @user.id, followed_user_id: @following_user.id)
     sign_in @user
   end
 
@@ -57,13 +58,12 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
 
   test 'should update user as admin' do
     patch admin_user_update_api_v1_user_url(@user),
-          params: { user: { username: 'New Username', role: :admin, active: true, show_email: true, bio: 'New Bio' } }
+          params: { user: { username: 'New Username', role: :admin, active: true, bio: 'New Bio' } }
     assert_response :success
     @user.reload
     assert_equal 'New Username', @user.username
     assert_equal 'admin', @user.role
     assert_equal true, @user.active
-    assert_equal true, @user.show_email
     assert_equal 'New Bio', @user.bio
   end
 
@@ -78,5 +78,17 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     @following_user.reload
     assert_equal 'admin', @user.role
     assert_equal 'admin', @following_user.role
+  end
+
+  test 'should get following users' do
+    get following_api_v1_user_url(@user)
+    assert_response :success
+    assert_equal @user.following_users.to_json, @response.body
+  end
+
+  test 'should get followed by users' do
+    get followers_api_v1_user_url(@user)
+    assert_response :success
+    assert_equal @user.followed_by_users.to_json, @response.body
   end
 end
