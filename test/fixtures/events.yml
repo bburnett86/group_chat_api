@@ -1,6 +1,6 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-event_one:
+one:
   id: 7d2b13e0-a0d7-11ea-bb37-0242ac130002
   title: 'Title One is now longer'
   description: 'Event One description is now at least 20 characters long'
@@ -8,7 +8,7 @@ event_one:
   end_time: <%= 2.days.from_now.iso8601 %>
   active: true
 
-event_two:
+two:
   id: 7d2b13e0-a0d7-11ea-bb37-0242ac130003
   title: 'Title Two is also longer'
   description: 'Event Two description is now at least 20 characters long'

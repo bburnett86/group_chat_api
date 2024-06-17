@@ -91,4 +91,16 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_equal @user.followed_by_users.to_json, @response.body
   end
+
+
+  test "should get user's events" do
+    get events_api_v1_user_url(@user)
+    assert_response :success
+
+    json_response = JSON.parse(response.body)
+    assert_equal @user.events.count, json_response.count
+    json_response.each do |event|
+      assert @user.events.find_by(id: event["id"])
+    end
+  end
 end

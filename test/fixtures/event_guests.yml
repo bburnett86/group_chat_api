@@ -5,7 +5,7 @@ one:
   user_id: e5a4c27d-f5db-4e56-b369-0c3674eab637
   event_id: 7d2b13e0-a0d7-11ea-bb37-0242ac130002
   status: 'PENDING'
-  role: 'GUEST'
+  role: 'ORGANIZER'
   created_at: <%= 1.day.ago %>
   updated_at: <%= Time.now %>
 
@@ -14,7 +14,7 @@ two:
   user_id: 1d955636-d703-44b8-9852-132952a1b8b2
   event_id: 7d2b13e0-a0d7-11ea-bb37-0242ac130002
   status: 'GOING'
-  role: 'HOST'
+  role: 'GUEST'
   created_at: <%= 2.days.ago %>
   updated_at: <%= 1.day.ago %>
 
@@ -22,8 +22,8 @@ three:
   id: 1d955636-d703-44b8-9852-132952a1b8b5
   user_id: 3a7e9e1f-8e4d-4e4f-9e4c-7d8b6a5c2b1a
   event_id: 7d2b13e0-a0d7-11ea-bb37-0242ac130003
-  status: 'NOT_GOING'
-  role: 'GUEST'
+  status: 'PENDING'
+  role: 'HOST'
   created_at: <%= 3.days.ago %>
   updated_at: <%= 2.days.ago %>
 

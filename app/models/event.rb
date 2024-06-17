@@ -3,6 +3,7 @@ class Event < ApplicationRecord
   validates :description, length: { minimum: 20 }
 	validates :title, length: { minimum: 5 }
   validate :start_time_before_end_time, :start_time_and_end_time_are_datetime
+  
 	has_many :event_guests, dependent: :destroy
   has_many :users, through: :event_guests
 

@@ -43,11 +43,15 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def following
-    render json: @user.following_users
+    render json: current_user.following_users
   end
 
   def followers
-    render json: @user.followed_by_users
+    render json: current_user.followed_by_users
+  end
+
+  def events
+    render json: current_user.events
   end
 
   private
