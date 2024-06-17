@@ -6,7 +6,8 @@
 class Api::V1::UsersController < ApplicationController
   before_action :authenticate_user!
   before_action :check_admin, only: [:index, :activate, :deactivate, :admin_user_update]
-  before_action :set_user, only: [:show, :update, :activate, :deactivate, :admin_user_update]
+  before_action :set_user, only: [:show, :update, :activate, :deactivate, :admin_user_update, :following, :followers]
+
 
   def index
     render json: User.all
@@ -22,21 +23,11 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def activate
-    if @user.active
-      render json: { error: 'User is already active' }, status: :bad_request
-    else
-      @user.update!(active: true)
-      render json: @user
-    end
+    set_active_state(true)
   end
 
   def deactivate
-    if !@user.active
-      render json: { error: 'User is already inactive' }, status: :bad_request
-    else
-      @user.update!(active: false)
-      render json: @user
-    end
+    set_active_state(false)
   end
 
   def admin_user_update
@@ -51,10 +42,19 @@ class Api::V1::UsersController < ApplicationController
     render json: { message: 'Roles updated successfully' }
   end
 
+  def following
+    render json: @user.following_users
+  end
+
+  def followers
+    render json: @user.followed_by_users
+  end
+
   private
 
   def set_user
-    @user = User.find(params[:id])
+    @user = User.find_by(id: params[:id] || params[:user_id])
+    render json: { error: 'User not found' }, status: :not_found if @user.nil?
   end
 
   def update_user_params
@@ -62,6 +62,15 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def admin_user_update_params
-    params.require(:user).permit(:username, :role, :active, :show_email, :bio, :avatar_url)
+    params.require(:user).permit(:username, :role, :active, :bio, :avatar_url)
+  end
+
+  def set_active_state(active)
+    if @user.active == active
+      render json: { error: "User is already #{active ? 'active' : 'inactive'}" }, status: :bad_request
+    else
+      @user.update!(active: active)
+      render json: @user
+    end
   end
 end
