@@ -37,11 +37,11 @@ Rails.application.routes.draw do
           patch 'deactivate'
           get 'following'
           get 'followers'
+          get 'events'
+          get 'clubs'
         end
         resources :blocks, only: %i[index create destroy]
         resources :posts, only: %i[index]
-        resources :events
-        resources :clubs
       end
       resources :follows, only: %i[create destroy]
       resources :posts do
@@ -51,7 +51,12 @@ Rails.application.routes.draw do
         end
       end
       resources :events do
-        resources :event_guests, only: %i[index create destroy]
+        resources :event_guests, only: %i[index create destroy] do
+        collection do
+          patch :add_multiple_guests
+          patch :update_multiple_guest_roles
+        end
+      end
         resources :event_forums
       end
       resources :clubs do

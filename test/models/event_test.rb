@@ -2,7 +2,7 @@ require 'test_helper'
 
 class EventTest < ActiveSupport::TestCase
   def setup
-    @event = events(:event_one)
+    @event = events(:one)
   end
 
   test 'valid event' do
