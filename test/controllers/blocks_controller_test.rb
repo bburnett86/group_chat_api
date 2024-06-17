@@ -4,7 +4,7 @@ class BlocksControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
 
   setup do
-    @user = users(:one)
+    @user = users(:five)
     @blocked_user = users(:two)
     @user.update_attribute(:active, true)
     @blocked_user.update_attribute(:active, false)
