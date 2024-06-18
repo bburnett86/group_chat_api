@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  id: 6b1fa2dd-91c1-4d7c-a14c-d5e138e14f1e
+  name: "Test Club One"
+  about_us: "This is a test club. We do testing things."
+  public: true
+
+two:
+  id: 7c2fa3ee-a2d1-5e8c-b3dc-e6f248f15f2e
+  name: "Test Club Two"
+  about_us: "This is another test club. We also do testing things."
+  public: false

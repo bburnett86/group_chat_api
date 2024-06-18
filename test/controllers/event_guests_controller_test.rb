@@ -17,7 +17,7 @@ class Api::V1::EventGuestsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create event_guest" do
     assert_difference('EventGuest.count') do
-      post api_v1_event_event_guests_url(@event), params: { event_guest: { user_id: @event_guest.user_id, event_id: @event.id, status: @event_guest.status, role: @event_guest.role } }
+      post api_v1_event_event_guests_url(@event), params: { event_guest: { user_id: users(:four).id, event_id: @event.id, status: @event_guest.status, role: @event_guest.role } }
     end
     assert_response :created
   end
@@ -30,7 +30,7 @@ class Api::V1::EventGuestsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should add multiple guests" do
-    patch add_multiple_guests_api_v1_event_event_guests_url(@event), params: { guest_id_array: [users(:two).id, users(:three).id] } 
+    patch add_multiple_guests_api_v1_event_event_guests_url(@event), params: { guest_id_array: [users(:four).id, users(:three).id] } 
     assert_response :success
   end
 

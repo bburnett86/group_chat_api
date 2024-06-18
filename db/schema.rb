@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_17_181103) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_17_223415) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -22,6 +22,25 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_17_181103) do
     t.datetime "updated_at", null: false
     t.index ["blocked_user_id"], name: "index_blocks_on_blocked_user_id"
     t.index ["user_id"], name: "index_blocks_on_user_id"
+  end
+
+  create_table "club_members", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.uuid "club_id", null: false
+    t.string "status", default: "PENDING"
+    t.string "role", default: "STANDARD"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["club_id"], name: "index_club_members_on_club_id"
+    t.index ["user_id"], name: "index_club_members_on_user_id"
+  end
+
+  create_table "clubs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name"
+    t.string "about_us"
+    t.boolean "public"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "comments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -117,6 +136,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_17_181103) do
 
   add_foreign_key "blocks", "users"
   add_foreign_key "blocks", "users", column: "blocked_user_id"
+  add_foreign_key "club_members", "clubs"
+  add_foreign_key "club_members", "users"
   add_foreign_key "comments", "posts"
   add_foreign_key "comments", "users"
   add_foreign_key "event_guests", "events"

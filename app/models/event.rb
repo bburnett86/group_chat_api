@@ -12,6 +12,34 @@ class Event < ApplicationRecord
     self.update(active: false) if self.end_time < Time.zone.now
   end
 
+  def pending_guests
+    event_guests.where(status: EventGuest.statuses[:PENDING])
+  end
+
+  def going_guests
+    event_guests.where(status: EventGuest.statuses[:GOING])
+  end
+
+  def not_going_guests
+    event_guests.where(status: EventGuest.statuses[:NOT_GOING])
+  end
+
+  def maybe_guests
+    event_guests.where(status: EventGuest.statuses[:MAYBE])
+  end
+
+  def guests
+    event_guests.where(role: EventGuest.roles[:GUEST])
+  end
+
+  def hosts
+    event_guests.where(role: EventGuest.roles[:HOST])
+  end
+
+  def organizers
+    event_guests.where(role: EventGuest.roles[:ORGANIZER])
+  end
+
   private
 
   def start_time_before_end_time
