@@ -48,6 +48,10 @@ class User < ApplicationRecord
   has_many :event_guests, dependent: :destroy
   has_many :events, through: :event_guests
 
+  # CLUBS
+  has_many :club_members, dependent: :destroy
+  has_many :clubs, through: :club_members
+
   # Return list of all user IDs that have blocked this user and this user has blocked.
   def hidden_user_ids
     self.blocked_users.pluck(:id) + self.blocked_by_users.pluck(:id)

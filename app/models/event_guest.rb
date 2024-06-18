@@ -1,5 +1,5 @@
 class EventGuest < ApplicationRecord
-  #validate no dupes between event and user
+  validates :user_id, uniqueness: { scope: :event_id }
 	validates :user_id, :event_id, :status, :role, presence: true
 
   STATUS_VALUES = { PENDING: 'PENDING', GOING: 'GOING', NOT_GOING: 'NOT_GOING', MAYBE: 'MAYBE' }.freeze

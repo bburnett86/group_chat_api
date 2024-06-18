@@ -1,0 +1,31 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+accepted:
+  user_id: e5a4c27d-f5db-4e56-b369-0c3674eab637
+  club_id: 6b1fa2dd-91c1-4d7c-a14c-d5e138e14f1e
+  status: "ACCEPTED"
+  role: "MEMBER"
+
+pending:
+  user_id: 1d955636-d703-44b8-9852-132952a1b8b2
+  club_id: 6b1fa2dd-91c1-4d7c-a14c-d5e138e14f1e
+  status: "PENDING"
+  role: "MEMBER"
+
+rejected:
+  user_id: 3a7e9e1f-8e4d-4e4f-9e4c-7d8b6a5c2b1a
+  club_id: 6b1fa2dd-91c1-4d7c-a14c-d5e138e14f1e
+  status: "REJECTED"
+  role: "MEMBER"
+
+admin:
+  user_id: 4a7e9e1f-8e4d-4e4f-9e4c-7d8b6a5c2b1a
+  club_id: 6b1fa2dd-91c1-4d7c-a14c-d5e138e14f1e
+  status: "ACCEPTED"
+  role: "ADMIN"
+
+superadmin:
+  user_id: 5a7e9e1f-8e4d-4e4f-9e4c-7d8b6a5c2b1a
+  club_id: 6b1fa2dd-91c1-4d7c-a14c-d5e138e14f1e
+  status: "ACCEPTED"
+  role: "SUPERADMIN"
