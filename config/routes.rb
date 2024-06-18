@@ -51,6 +51,15 @@ Rails.application.routes.draw do
         end
       end
       resources :events do
+        member do
+          get 'pending_guests'
+          get 'going_guests'
+          get 'not_going_guests'
+          get 'maybe_guests'
+          get 'all_guests'
+          get 'hosts'
+          get 'organizers'
+        end
         resources :event_guests, only: %i[index create destroy] do
         collection do
           patch :add_multiple_guests

@@ -1,6 +1,6 @@
 class Api::V1::EventsController < ApplicationController
 	before_action :authenticate_user!
-	before_action :set_event, only: [:show, :update, :destroy]
+	before_action :set_event, only: [:show, :update, :destroy, :pending_guests, :going_guests, :not_going_guests, :maybe_guests, :hosts, :organizers]
 	before_action :user_not_guest_check, only: [:update]
 	before_action :user_organizer_check, only: [:destroy]
 
@@ -28,6 +28,31 @@ class Api::V1::EventsController < ApplicationController
     else
       render json: @event.errors, status: :unprocessable_entity
     end
+  end
+
+  # get 'pending_guests'
+  def pending_guests
+    render json: @event.pending_guests
+  end
+  # get 'going_guests'
+  def going_guests
+    render json: @event.going_guests
+  end
+  # get 'not_going_guests'
+  def not_going_guests
+    render json: @event.not_going_guests
+  end
+  # get 'maybe_guests'
+  def maybe_guests
+    render json: @event.maybe_guests
+  end
+  # get 'hosts'
+  def hosts
+    render json: @event.hosts
+  end
+  # get 'organizers'
+  def organizers
+    render json: @event.organizers
   end
 
   def destroy
