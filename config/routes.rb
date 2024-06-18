@@ -61,17 +61,23 @@ Rails.application.routes.draw do
           get 'organizers'
         end
         resources :event_guests, only: %i[index create destroy] do
-        collection do
-          patch :add_multiple_guests
-          patch :update_multiple_guest_roles
+          collection do
+            patch :add_multiple_guests
+            patch :update_multiple_guest_roles
+          end
         end
-      end
-        resources :event_forums
-      end
+      end 
       resources :clubs do
-        resources :club_events
+        member do
+          get 'accepted_members'
+          get 'pending_members'
+          get 'rejected_members'
+          get 'admins'
+          get 'superadmins'
+          get 'members'
+        end
         resources :club_members
-        resources :club_forums
+        resources :club_events
       end
     end
   end
