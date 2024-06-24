@@ -6,6 +6,9 @@ class Api::V1::EventsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @event = events(:one)
     @user = users(:one)
+    @user.update!(role: 'superadmin')
+    @user_two = users(:two)
+    @user_three = users(:three)
     sign_in @user
   end
 
@@ -74,4 +77,27 @@ class Api::V1::EventsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_equal @event.organizers.as_json, JSON.parse(response.body)
   end
+
+  test "should bulk invite guests" do
+    guest_users = { guests: [ { user_id: users(:five).id, event_id: events(:one).id }] }
+    assert_difference('@event.participants.count', 1) do 
+      post bulk_invite_guests_api_v1_events_url, params: guest_users
+    end
+    assert_response :success
+    assert_not_nil response
+    json_response = JSON.parse(response.body)
+    assert_equal "1 Guests invited successfully", json_response["message"]
+  end
+
+  test 'should update multiple user roles' do
+    users = [
+      { user_id: @user_three.id, role: 'ADMIN', event_id: events(:one).id },
+      { user_id: @user_two.id, role: 'ADMIN', event_id: events(:one).id }
+    ]
+    patch bulk_role_updates_api_v1_events_url, params: { users: users }
+    assert_response :success
+    json_response = JSON.parse(response.body)
+    assert_equal 'Roles updated successfully', json_response["message"]
+  end
+  
 end

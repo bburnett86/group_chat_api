@@ -4,30 +4,30 @@ class Club < ApplicationRecord
 	validates :name, uniqueness: true
 	validates :about_us, length: { minimum: 20 } 
 
-	has_many :club_members, dependent: :destroy
-	has_many :users, through: :club_members
+  has_many :participants, as: :participable, dependent: :destroy
+  has_many :members, through: :participants
 
 	def accepted_members
-		club_members.where(status: ClubMember.statuses[:ACCEPTED])
+		participants.where(status: Participant.statuses[:ACCEPTED])
 	end
 
 	def pending_members
-			club_members.where(status: ClubMember.statuses[:PENDING])
+			participants.where(status: Participant.statuses[:PENDING])
 	end
 
 	def rejected_members
-			club_members.where(status: ClubMember.statuses[:REJECTED])
+			participants.where(status: Participant.statuses[:REJECTED])
 	end
 
 	def admins
-			club_members.where(role: ClubMember.roles[:ADMIN])
+			participants.where(role: Participant.roles[:ADMIN])
 	end
 
 	def superadmins
-			club_members.where(role: ClubMember.roles[:SUPERADMIN])
+			participants.where(role: Participant.roles[:SUPERADMIN])
 	end
 
 	def members
-			club_members.where(role: ClubMember.roles[:MEMBER])
+			participants.where(role: Participant.roles[:MEMBER])
 	end
 end

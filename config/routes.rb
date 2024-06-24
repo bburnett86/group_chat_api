@@ -51,6 +51,11 @@ Rails.application.routes.draw do
         end
       end
       resources :events do
+        collection do
+          patch :deactivate_past_events
+          post :bulk_invite_guests
+          patch :bulk_role_updates
+        end
         member do
           get 'pending_guests'
           get 'going_guests'
@@ -60,14 +65,12 @@ Rails.application.routes.draw do
           get 'hosts'
           get 'organizers'
         end
-        resources :event_guests, only: %i[index create destroy] do
-          collection do
-            patch :add_multiple_guests
-            patch :update_multiple_guest_roles
-          end
-        end
       end 
       resources :clubs do
+        collection do
+          post :bulk_invite_members
+          patch :bulk_role_updates
+        end
         member do
           get 'accepted_members'
           get 'pending_members'
@@ -76,7 +79,6 @@ Rails.application.routes.draw do
           get 'superadmins'
           get 'members'
         end
-        resources :club_members
         resources :club_events
       end
     end

@@ -28,11 +28,13 @@ class ClubsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update club" do
+    @user.update!(role: :admin)
     patch api_v1_club_url(@club), params: { club: { name: 'Updated Club', about_us: 'This is an updated club with this club about us.', public: false } }, as: :json
     assert_response :success
   end
 
   test "should destroy club" do
+    @user.update!(role: :superadmin)
     assert_difference('Club.count', -1) do
       delete api_v1_club_url(@club), as: :json
     end

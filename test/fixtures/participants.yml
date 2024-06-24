@@ -1,0 +1,57 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  id: 6b1fa2dd-91c1-4d7c-a14c-d5e138e14f1e
+  user_id: e5a4c27d-f5db-4e56-b369-0c3674eab637
+  participable_type: 'Event'
+  participable_id: 7d2b13e0-a0d7-11ea-bb37-0242ac130002
+  status: 'PENDING'
+  role: 'ADMIN'
+
+two:
+  id: 7c2fa3ee-a2d1-5e8c-b3dc-e6f248f15f2e
+  user_id: 1d955636-d703-44b8-9852-132952a1b8b2
+  participable_type: 'Event'
+  participable_id: 7d2b13e0-a0d7-11ea-bb37-0242ac130002
+  status: 'ACCEPTED'
+  role: 'SUPERADMIN'
+
+three:
+  id: 8d3fb4ff-b3e1-6f9d-c4ed-f7f358f16f3f
+  user_id: 3a7e9e1f-8e4d-4e4f-9e4c-7d8b6a5c2b1a
+  participable_type: 'Event'
+  participable_id: 7d2b13e0-a0d7-11ea-bb37-0242ac130002
+  status: 'REJECTED'
+  role: 'MEMBER'
+
+four:
+  id: 9e4ac5aa-c4f2-7a10-d5ae-8a469a17a4a4
+  user_id: 4a7e9e1f-8e4d-4e4f-9e4c-7d8b6a5c2b1a
+  participable_type: 'Club'
+  participable_id: 6b1fa2dd-91c1-4d7c-a14c-d5e138e14f1e
+  status: 'PENDING'
+  role: 'ADMIN'
+
+five:
+  id: af5ad6ab-d5a3-8a14-e6af-9a570a18a5a5
+  user_id: 5a7e9e1f-8e4d-4e4f-9e4c-7d8b6a5c2b1a
+  participable_type: 'Club'
+  participable_id: 6b1fa2dd-91c1-4d7c-a14c-d5e138e14f1e
+  status: 'ACCEPTED'
+  role: 'SUPERADMIN'
+
+six:
+  id: b6c20fe2-2a5a-4bd2-8b8b-2f8f2c647eea
+  user_id: e5a4c27d-f5db-4e56-b369-0c3674eab637
+  participable_type: 'Club'
+  participable_id: 6b1fa2dd-91c1-4d7c-a14c-d5e138e14f1e
+  status: 'REJECTED'
+  role: 'MEMBER'
+
+seven:
+  id: f8a1d8b2-8f2c-4b3e-8b3d-2f2f2c647eea
+  user_id: 4a7e9e1f-8e4d-4e4f-9e4c-7d8b6a5c2b1a
+  participable_type: 'Event'
+  participable_id: 7d2b13e0-a0d7-11ea-bb37-0242ac130002
+  status: 'MAYBE'
+  role: 'MEMBER'

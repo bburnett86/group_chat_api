@@ -51,8 +51,13 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def events
-    render json: current_user.events
+    render json: @current_user.events
   end
+
+  def clubs
+    render json: @current_user.clubs
+  end
+
 
   private
 

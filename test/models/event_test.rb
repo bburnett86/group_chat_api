@@ -3,6 +3,12 @@ require 'test_helper'
 class EventTest < ActiveSupport::TestCase
   def setup
     @event = events(:one)
+    @pending_guest = participants(:one)
+    @going_guest = participants(:two)
+    @not_going_guest = participants(:three)
+    @maybe_guest = participants(:seven)
+    @host = participants(:one)
+    @organizer = participants(:two)
   end
 
   test 'valid event' do
@@ -64,5 +70,34 @@ class EventTest < ActiveSupport::TestCase
     @event.end_time = Time.now - 1.hour
     @event.deactivate_if_past
     refute @event.active, 'event is still active after end_time has passed'
+  end
+
+  test 'pending_guests returns correct participants' do
+    assert_includes @event.pending_guests, @pending_guest
+  end
+
+  test 'going_guests returns correct participants' do
+    assert_includes @event.going_guests, @going_guest
+  end
+
+  test 'not_going_guests returns correct participants' do
+    assert_includes @event.not_going_guests, @not_going_guest
+  end
+
+  test 'maybe_guests returns correct participants' do
+    assert_includes @event.maybe_guests, @maybe_guest
+  end
+
+  test 'guests returns correct participants' do
+    assert @event.guests.include?(@not_going_guest), 'Guests does not include not going guest'
+    assert @event.guests.include?(@maybe_guest), 'Guests does not include maybe guest'
+  end
+
+  test 'hosts returns correct participants' do
+    assert_includes @event.hosts, @host
+  end
+
+  test 'organizers returns correct participants' do
+    assert_includes @event.organizers, @organizer
   end
 end
