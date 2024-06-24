@@ -2,12 +2,13 @@ require "test_helper"
 
 class ClubTest < ActiveSupport::TestCase
   setup do
-    @club = clubs(:one) # assuming you have a clubs fixture
-    @accepted_member = club_members(:accepted) # assuming you have a club_members fixture
-    @pending_member = club_members(:pending)
-    @rejected_member = club_members(:rejected)
-    @admin = club_members(:admin)
-    @superadmin = club_members(:superadmin)
+    @club = clubs(:one)
+    @accepted_member = participants(:five)
+    @pending_member = participants(:four)
+    @rejected_member = participants(:six)
+    @admin = participants(:four)
+    @superadmin = participants(:five)
+    @member = participants(:six)
   end
 
   test "accepted_members method" do
@@ -31,6 +32,6 @@ class ClubTest < ActiveSupport::TestCase
   end
 
   test "members method" do
-    assert_includes @club.members, @accepted_member
+    assert_includes @club.members, @member
   end
 end

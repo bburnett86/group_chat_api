@@ -12,7 +12,7 @@ class Api::V1::EventsController < ApplicationController
   def create
     @event = Event.new(event_params)
     if @event.save
-      @event.event_guests.create(user_id: current_user.id, role: 'ORGANIZER', status: 'GOING')
+      @event.participants.create(user_id: current_user.id, role: 'SUPERADMIN', status: 'ACCEPTED')
       render json: @event, status: :created
     else
       render json: @event.errors, status: :unprocessable_entity
@@ -60,6 +60,28 @@ class Api::V1::EventsController < ApplicationController
     @event.destroy
   end
 
+  def bulk_invite_guests
+    invited_count = 0
+    params[:guests].each do |guest|
+      event = Event.find(guest[:event_id])
+      participant = event.participants.build(user_id: guest[:user_id], status: 'PENDING')
+      invited_count += 1 if participant.save
+    end
+    if invited_count > 0
+      render json: { message: "#{invited_count} Guests invited successfully" }, status: :ok
+    else
+      render json: { error: "No guests were invited" }, status: :unprocessable_entity
+    end
+  end
+
+  def bulk_role_updates
+    params[:users].each do |user|
+      event = Event.find(user[:event_id])
+      event.participants.find_by(user_id: user[:user_id]).update!(role: user[:role])
+    end
+    render json: { message: 'Roles updated successfully' }
+  end
+
   private
 
   def set_event
@@ -67,15 +89,15 @@ class Api::V1::EventsController < ApplicationController
   end
 
   def user_not_guest_check
-    guest = @event.event_guests.find_by(user_id: current_user.id)
-    unless guest.role.in?(['ORGANIZER', 'HOST']) || current_user.admin? || current_user.superadmin?
+    guest = @event.participants.find_by(user_id: current_user.id)
+    unless guest.role.in?(['ADMIN', 'SUPERADMIN']) || current_user.admin? || current_user.superadmin?
       render json: { error: 'You do not have permission to perform this action' }, status: :unauthorized
     end
   end
   
   def user_organizer_check
-    guest = @event.event_guests.find_by(user_id: current_user.id)
-    unless guest.role == 'ORGANIZER' || current_user.admin? || current_user.superadmin?
+    guest = @event.participants.find_by(user_id: current_user.id)
+    unless guest.role == 'ADMIN' || current_user.admin? || current_user.superadmin?
       render json: { error: 'You do not have permission to perform this action' }, status: :unauthorized
     end
   end

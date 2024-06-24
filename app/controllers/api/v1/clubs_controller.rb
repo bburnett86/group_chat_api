@@ -12,7 +12,7 @@ class Api::V1::ClubsController < ApplicationController
 	def create
 		@club = Club.new(club_params)
 		if @club.save
-			@club.club_members.create(user_id: current_user.id, role: 'SUPERADMIN', status: 'ACCEPTED')
+			@club.participants.create(user_id: current_user.id, role: 'SUPERADMIN', status: 'ACCEPTED')
 			render json: @club, status: :created
 		else
 			render json: @club.errors, status: :unprocessable_entity
@@ -70,14 +70,14 @@ class Api::V1::ClubsController < ApplicationController
 	end
 
 	def user_admin_check
-    member = @club.club_members.find_by(user_id: current_user.id)
+    member = @club.participants.find_by(user_id: current_user.id)
     unless member&.role.in?(['ADMIN', 'SUPERADMIN']) || current_user.admin? || current_user.superadmin?
       render json: { error: 'You do not have permission to perform this action' }, status: :unauthorized
     end
   end
 
   def user_superadmin_check
-    member = @club.club_members.find_by(user_id: current_user.id)
+    member = @club.participants.find_by(user_id: current_user.id)
     unless member&.role == 'SUPERADMIN' || current_user.admin? || current_user.superadmin?
       render json: { error: 'You do not have permission to perform this action' }, status: :unauthorized
     end

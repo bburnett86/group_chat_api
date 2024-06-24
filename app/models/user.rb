@@ -44,13 +44,10 @@ class User < ApplicationRecord
   has_many :likes_as_liked, class_name: 'Like', foreign_key: 'liked_id', dependent: :destroy
   has_many :comments, dependent: :destroy
 
-  # EVENTS
-  has_many :event_guests, dependent: :destroy
-  has_many :events, through: :event_guests
-
-  # CLUBS
-  has_many :club_members, dependent: :destroy
-  has_many :clubs, through: :club_members
+  #CLUBS AND EVENTS
+  has_many :participants, dependent: :destroy
+  has_many :clubs, through: :participants, source: :participable, source_type: 'Club'
+  has_many :events, through: :participants, source: :participable, source_type: 'Event'
 
   # Return list of all user IDs that have blocked this user and this user has blocked.
   def hidden_user_ids

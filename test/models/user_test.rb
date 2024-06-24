@@ -3,7 +3,7 @@
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
-  fixtures :users, :blocks, :follows, :posts, :likes, :comments, :event_guests
+  fixtures :users, :blocks, :follows, :posts, :likes, :comments, :participants
   def setup
     @user = users(:one)
   end
@@ -163,16 +163,16 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
-  test 'has many event_guests' do
-    assert_equal @user.event_guests.count, EventGuest.where(user_id: @user.id).count
+  test 'has many participants' do
+    assert_equal @user.participants.count, Participant.where(user_id: @user.id).count
   end
 
   test 'has many events' do
-    assert_equal @user.events.count, Event.joins(:event_guests).where(event_guests: { user_id: @user.id }).count
+    assert_equal @user.events.count, Event.joins(:participants).where(participants: { user_id: @user.id }).count
   end
 
-  test 'event_guests are destroyed when user is destroyed' do
-    assert_difference 'EventGuest.count', -@user.event_guests.count do
+  test 'participants are destroyed when user is destroyed' do
+    assert_difference 'Participant.count', -@user.participants.count do
       @user.destroy
     end
   end
