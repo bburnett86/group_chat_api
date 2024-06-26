@@ -39,9 +39,9 @@ Rails.application.routes.draw do
           get 'followers'
           get 'events'
           get 'clubs'
+          get 'posts'
         end
         resources :blocks, only: %i[index create destroy]
-        resources :posts, only: %i[index]
       end
       resources :follows, only: %i[create destroy]
       resources :posts do

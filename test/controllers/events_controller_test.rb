@@ -86,7 +86,7 @@ class Api::V1::EventsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_not_nil response
     json_response = JSON.parse(response.body)
-    assert_equal "1 Guests invited successfully", json_response["message"]
+    assert_equal "1 Guest invited successfully", json_response["message"]
   end
 
   test 'should update multiple user roles' do

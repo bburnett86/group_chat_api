@@ -114,4 +114,15 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "should get user's posts" do
+    get posts_api_v1_user_url(@user)
+    assert_response :success
+  
+    json_response = JSON.parse(@response.body)
+    assert_equal @user.posts.count, json_response.count
+    json_response.each do |post|
+      assert @user.posts.find_by(id: post["id"])
+    end
+  end
+
 end

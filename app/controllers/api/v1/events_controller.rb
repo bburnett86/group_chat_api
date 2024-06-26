@@ -65,9 +65,11 @@ class Api::V1::EventsController < ApplicationController
     params[:guests].each do |guest|
       event = Event.find(guest[:event_id])
       participant = event.participants.build(user_id: guest[:user_id], status: 'PENDING')
-      invited_count += 1 if participant.save
+      invited_count += 1 if participant && participant.save
     end
-    if invited_count > 0
+    if invited_count == 1
+			render json: { message: "#{invited_count} Guest invited successfully" }, status: :ok
+    elsif invited_count > 0
       render json: { message: "#{invited_count} Guests invited successfully" }, status: :ok
     else
       render json: { error: "No guests were invited" }, status: :unprocessable_entity
@@ -77,7 +79,10 @@ class Api::V1::EventsController < ApplicationController
   def bulk_role_updates
     params[:users].each do |user|
       event = Event.find(user[:event_id])
-      event.participants.find_by(user_id: user[:user_id]).update!(role: user[:role])
+      participant = event.participants.find_by(user_id: user[:user_id])
+			if participant && participant.role != user[:role]
+				participant.update!(role: user[:role])
+			end
     end
     render json: { message: 'Roles updated successfully' }
   end
