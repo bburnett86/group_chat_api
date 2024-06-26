@@ -59,6 +59,33 @@ class Api::V1::ClubsController < ApplicationController
     render json: @club.members
   end
 
+	def bulk_invite_members
+    invited_count = 0
+    params[:members].each do |member|
+      club = Club.find(member[:club_id])
+      participant = club.participants.build(user_id: member[:user_id], status: 'PENDING')
+      invited_count += 1 if participant && participant.save
+    end
+		if invited_count == 1
+			render json: { message: "#{invited_count} Member invited successfully" }, status: :ok
+    elsif invited_count > 0
+      render json: { message: "#{invited_count} Members invited successfully" }, status: :ok
+    else
+      render json: { error: "No members were invited" }, status: :unprocessable_entity
+    end
+  end
+
+  def bulk_role_updates
+    params[:users].each do |user|
+      club = Club.find(user[:club_id])
+      participant = club.participants.find_by(user_id: user[:user_id])
+			if participant && participant.role != user[:role]
+				participant.update!(role: user[:role])
+			end
+    end
+    render json: { message: 'Roles updated successfully' }
+  end
+
   private
 
   def set_club

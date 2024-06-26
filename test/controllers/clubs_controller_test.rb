@@ -6,6 +6,8 @@ class ClubsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @club = clubs(:one)
     @user = users(:five)
+    @user_two = users(:two)
+    @user_three = users(:three)
     sign_in @user
   end
 
@@ -70,5 +72,26 @@ class ClubsControllerTest < ActionDispatch::IntegrationTest
   test "should get members" do
     get members_api_v1_club_url(@club), as: :json
     assert_response :success
+  end
+  test "should bulk invite members" do
+    invites = { members: [{ user_id: users(:two).id, club_id: @club.id }] }
+    assert_difference('@club.participants.count', 1) do 
+      post bulk_invite_members_api_v1_clubs_url, params: invites
+    end
+    assert_response :success
+    assert_not_nil response
+    json_response = JSON.parse(response.body)
+    assert_equal "1 Member invited successfully", json_response["message"]  
+  end
+
+  test 'should update multiple user roles' do
+    users = [
+      { user_id: @user_three.id, role: 'ADMIN', club_id: @club.id },
+      { user_id: @user_two.id, role: 'ADMIN', club_id: @club.id }
+    ]
+    patch bulk_role_updates_api_v1_clubs_url, params: { users: users }
+    assert_response :success
+    json_response = JSON.parse(response.body)
+    assert_equal 'Roles updated successfully', json_response["message"]
   end
 end
