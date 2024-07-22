@@ -21,7 +21,7 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
 
   test 'should create post' do
     assert_difference('Post.count') do
-      post api_v1_posts_url, params: { post: { user_id: @user.id, description: 'New Description', close_friends: false, post_type: 'wall' } }
+      post api_v1_posts_url, params: { post: { user_id: @user.id, description: 'New Description', close_friends: false} }
     end
   
     assert_response :success

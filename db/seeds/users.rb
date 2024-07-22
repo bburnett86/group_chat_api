@@ -1,4 +1,4 @@
-10.times do
+20.times do
   username = Faker::Internet.username
   while username.length < 5
     username = Faker::Internet.username
@@ -14,3 +14,5 @@
 		avatar_url: Faker::LoremFlickr.image
   )
 end
+
+puts "Users seeded."

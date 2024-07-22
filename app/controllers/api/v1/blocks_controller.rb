@@ -2,9 +2,10 @@ class Api::V1::BlocksController < ApplicationController
 	before_action :set_user
   before_action :set_block, only: [:destroy]
 
+  # May not need this route if blocked data is arriving with user data
   # GET /api/v1/users/:user_id/blocks
   def index
-    @blocks = @user.blocked_users
+    @blocks = @user.blocked_users.select(:id, :username)
 
     render json: @blocks
   end

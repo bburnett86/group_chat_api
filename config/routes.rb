@@ -30,16 +30,12 @@ Rails.application.routes.draw do
       resources :users, only: %i[index show update] do
         collection do
           patch :admin_update_role_bulk
+          get :current_user_info
         end
         member do
           patch 'admin_user_update'
           patch 'activate'
           patch 'deactivate'
-          get 'following'
-          get 'followers'
-          get 'events'
-          get 'clubs'
-          get 'posts'
         end
         resources :blocks, only: %i[index create destroy]
       end
@@ -53,8 +49,6 @@ Rails.application.routes.draw do
       resources :events do
         collection do
           patch :deactivate_past_events
-          post :bulk_invite_guests
-          patch :bulk_role_updates
         end
         member do
           get 'pending_guests'
@@ -65,12 +59,15 @@ Rails.application.routes.draw do
           get 'hosts'
           get 'organizers'
         end
-      end 
-      resources :clubs do
-        collection do
-          post :bulk_invite_members
-          patch :bulk_role_updates
+        # Custom routes for bulk actions under a specific event
+        resources :bulk, only: [], controller: 'events' do
+          collection do
+            post :invite_guests
+            patch :role_updates
+          end
         end
+      end
+      resources :clubs do
         member do
           get 'accepted_members'
           get 'pending_members'
@@ -79,7 +76,12 @@ Rails.application.routes.draw do
           get 'superadmins'
           get 'members'
         end
-        resources :club_events
+        resources :bulk, only: [], controller: 'clubs' do
+          collection do
+            post :invite_members
+            patch :role_updates
+          end
+        end
       end
     end
   end

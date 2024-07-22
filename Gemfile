@@ -40,6 +40,7 @@ gem 'rubocop-performance'
 gem 'rubocop-rspec'
 gem 'rubocop-shopify'
 gem 'rubocop-thread_safety'
+gem 'bullet'
 
 gem 'omniauth'
 

@@ -8,7 +8,8 @@ class User < ApplicationRecord
   validates :avatar_url, format: { with: URI::DEFAULT_PARSER.make_regexp }
   validates :active, inclusion: { in: [true, false] }
 
-  before_save :downcase_email, :set_default_role
+  before_save :downcase_email
+  before_create :set_default_role
   before_destroy :destroy_blocks_with_blocked_user
 
   enum role: { standard: 'STANDARD', admin: 'ADMIN', superadmin: 'SUPERADMIN' }

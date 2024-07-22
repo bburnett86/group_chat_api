@@ -1,11 +1,11 @@
 class Api::V1::EventsController < ApplicationController
 	before_action :authenticate_user!
-	before_action :set_event, only: [:show, :update, :destroy, :pending_guests, :going_guests, :not_going_guests, :maybe_guests, :hosts, :organizers]
+	before_action :set_event, only: [:show, :update, :destroy, :pending_guests, :going_guests, :not_going_guests, :maybe_guests, :hosts, :organizers, :invite_guests, :role_updates]
 	before_action :user_not_guest_check, only: [:update]
 	before_action :user_organizer_check, only: [:destroy]
 
   def index
-    @events = Event.all
+    @events = Event.select(:id, :title, :description, :start_time, :end_time, :active)
     render json: @events
   end
 
@@ -20,7 +20,37 @@ class Api::V1::EventsController < ApplicationController
   end
 
   def show
-    render json: @event
+    @event = Event.includes(posts: [:comments => :user]).find(params[:id])
+    event_details = @event.as_json(
+      include: {
+        posts: {
+          only: [:id, :description],
+          include: {
+            # Post user
+            user: { only: [:id, :username] },
+            comments: {
+              only: [:id, :content],
+              include: {
+                # Comment user
+                user: { only: [:id, :username] } 
+              }
+            }
+          }
+        }
+      }
+    )
+  
+    custom_guest_details = {
+      pending_guests: @event.pending_guests.includes(:user).as_json(only: [:id, :status], include: { user: { only: [:id, :username] }}),
+      going_guests: @event.going_guests.includes(:user).as_json(only: [:id, :status], include: { user: { only: [:id, :username] }}),
+      not_going_guests: @event.not_going_guests.includes(:user).as_json(only: [:id, :status], include: { user: { only: [:id, :username] }}),
+      maybe_guests: @event.maybe_guests.includes(:user).as_json(only: [:id, :status], include: { user: { only: [:id, :username] }}),
+      guests: @event.guests.includes(:user).as_json(only: [:id, :status], include: { user: { only: [:id, :username] }}),
+      hosts: @event.hosts.includes(:user).as_json(only: [:id, :role], include: { user: { only: [:id, :username] }}),
+      organizers: @event.organizers.includes(:user).as_json(only: [:id, :role], include: { user: { only: [:id, :username] }})
+    }
+
+    render json: event_details.merge(custom_guest_details)
   end
 
   def update
@@ -31,40 +61,14 @@ class Api::V1::EventsController < ApplicationController
     end
   end
 
-  # get 'pending_guests'
-  def pending_guests
-    render json: @event.pending_guests
-  end
-  # get 'going_guests'
-  def going_guests
-    render json: @event.going_guests
-  end
-  # get 'not_going_guests'
-  def not_going_guests
-    render json: @event.not_going_guests
-  end
-  # get 'maybe_guests'
-  def maybe_guests
-    render json: @event.maybe_guests
-  end
-  # get 'hosts'
-  def hosts
-    render json: @event.hosts
-  end
-  # get 'organizers'
-  def organizers
-    render json: @event.organizers
-  end
-
   def destroy
     @event.destroy
   end
 
-  def bulk_invite_guests
+  def invite_guests
     invited_count = 0
     params[:guests].each do |guest|
-      event = Event.find(guest[:event_id])
-      participant = event.participants.build(user_id: guest[:user_id], status: 'PENDING')
+      participant = @event.participants.build(user_id: guest[:user_id], status: 'PENDING')
       invited_count += 1 if participant && participant.save
     end
     if invited_count == 1
@@ -76,13 +80,12 @@ class Api::V1::EventsController < ApplicationController
     end
   end
 
-  def bulk_role_updates
+  def role_updates
     params[:users].each do |user|
-      event = Event.find(user[:event_id])
-      participant = event.participants.find_by(user_id: user[:user_id])
+      participant = @event.participants.find_by(user_id: user[:user_id])
 			if participant && participant.role != user[:role]
 				participant.update!(role: user[:role])
-			end
+      end
     end
     render json: { message: 'Roles updated successfully' }
   end
@@ -90,7 +93,7 @@ class Api::V1::EventsController < ApplicationController
   private
 
   def set_event
-    @event = Event.find(params[:id])
+    @event = Event.find(params[:id] || params[:event_id])
   end
 
   def user_not_guest_check

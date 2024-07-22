@@ -6,3 +6,5 @@
     blocked_user: blocked_user
   )
 end
+
+puts "Blocks seeded."

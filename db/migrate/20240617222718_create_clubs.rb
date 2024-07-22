@@ -7,5 +7,8 @@ class CreateClubs < ActiveRecord::Migration[7.1]
 
       t.timestamps
     end
+
+    add_index :clubs, :name, unique: true
+    add_index :clubs, :public
   end
 end

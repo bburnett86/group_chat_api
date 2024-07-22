@@ -80,49 +80,9 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'admin', @following_user.role
   end
 
-  test 'should get following users' do
-    get following_api_v1_user_url(@user)
+  test 'should show current_user' do
+    get current_user_info_api_v1_users_url(@user)
     assert_response :success
-    assert_equal @user.following_users.to_json, @response.body
-  end
-
-  test 'should get followed by users' do
-    get followers_api_v1_user_url(@user)
-    assert_response :success
-    assert_equal @user.followed_by_users.to_json, @response.body
-  end
-
-  test "should get user's events" do
-    get events_api_v1_user_url(@user)
-    assert_response :success
-
-    json_response = JSON.parse(response.body)
-    assert_equal @user.events.count, json_response.count
-    json_response.each do |event|
-      assert @user.events.find_by(id: event["id"])
-    end
-  end
-
-  test "should get user's clubs" do
-    get clubs_api_v1_user_url(@user)
-    assert_response :success
-
-    json_response = JSON.parse(response.body)
-    assert_equal @user.clubs.count, json_response.count
-    json_response.each do |club|
-      assert @user.clubs.find_by(id: club["id"])
-    end
-  end
-
-  test "should get user's posts" do
-    get posts_api_v1_user_url(@user)
-    assert_response :success
-  
-    json_response = JSON.parse(@response.body)
-    assert_equal @user.posts.count, json_response.count
-    json_response.each do |post|
-      assert @user.posts.find_by(id: post["id"])
-    end
   end
 
 end

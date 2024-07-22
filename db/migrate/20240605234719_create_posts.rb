@@ -6,8 +6,12 @@ class CreatePosts < ActiveRecord::Migration[7.1]
       t.string :description, default: ''
       t.references :user, null: false, foreign_key: true, type: :uuid
       t.boolean :close_friends, default: false
+      t.string :postable_type
+      t.uuid :postable_id
 
       t.timestamps
     end
+
+    add_index :posts, [:user_id, :postable_type, :postable_id]
   end
 end
