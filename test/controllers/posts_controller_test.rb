@@ -5,7 +5,8 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
 
   def setup
     @user = users(:one)
-    @post = posts(:one) 
+    @post = posts(:one)
+    @event = events(:one)
     sign_in @user
   end
 
@@ -21,7 +22,7 @@ class Api::V1::PostsControllerTest < ActionDispatch::IntegrationTest
 
   test 'should create post' do
     assert_difference('Post.count') do
-      post api_v1_posts_url, params: { post: { user_id: @user.id, description: 'New Description', close_friends: false} }
+      post api_v1_posts_url, params: { post: { user_id: @user.id, description: 'New Description', close_friends: false, postable_id: @event.id, postable_type: "Event"} }
     end
   
     assert_response :success

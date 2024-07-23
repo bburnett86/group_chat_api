@@ -37,6 +37,7 @@ class Api::V1::LikesController < ApplicationController
 
   def set_like
     @like = Like.find(params[:id])
+    render json: { error: 'Like not found' }, status: :not_found if @like.nil?      
   end
 
   def like_params

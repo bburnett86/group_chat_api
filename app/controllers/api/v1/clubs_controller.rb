@@ -1,6 +1,6 @@
 class Api::V1::ClubsController < ApplicationController
 	before_action :authenticate_user!
-	before_action :set_club, only: [:show, :update, :destroy, :accepted_members, :pending_members, :rejected_members, :admins, :superadmins, :members, :invite_members, :role_updates]
+	before_action :set_club, only: [:show, :update, :destroy, :invite_members, :role_updates]
 	before_action :user_admin_check, only: [:update]
 	before_action :user_superadmin_check, only: [:destroy]
 
@@ -91,6 +91,7 @@ class Api::V1::ClubsController < ApplicationController
 
   def set_club
     @club = Club.find(params[:id] || params[:club_id])
+    render json: { error: 'Club not found' }, status: :not_found if @club.nil?
   end
 
 	def club_params

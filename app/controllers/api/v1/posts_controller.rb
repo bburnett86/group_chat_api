@@ -71,6 +71,7 @@ class Api::V1::PostsController < ApplicationController
 
   def set_post
     @post = Post.find(params[:id])
+    render json: { error: 'Post not found' }, status: :not_found if @post.nil?
   end
 
 	def authorize_user!

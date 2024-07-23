@@ -1,6 +1,6 @@
 class Api::V1::EventsController < ApplicationController
 	before_action :authenticate_user!
-	before_action :set_event, only: [:show, :update, :destroy, :pending_guests, :going_guests, :not_going_guests, :maybe_guests, :hosts, :organizers, :invite_guests, :role_updates]
+	before_action :set_event, only: [:show, :update, :destroy, :invite_guests, :role_updates]
 	before_action :user_not_guest_check, only: [:update]
 	before_action :user_organizer_check, only: [:destroy]
 
@@ -10,12 +10,12 @@ class Api::V1::EventsController < ApplicationController
   end
 
   def create
-    @event = Event.new(event_params)
-    if @event.save
-      @event.participants.create(user_id: current_user.id, role: 'SUPERADMIN', status: 'ACCEPTED')
-      render json: @event, status: :created
+    event = Event.new(event_params)
+    if event.save
+      event.participants.build(user_id: current_user.id, role: 'SUPERADMIN', status: 'ACCEPTED')
+      render json: event, status: :created
     else
-      render json: @event.errors, status: :unprocessable_entity
+      render json: event.errors, status: :unprocessable_entity
     end
   end
 
@@ -94,6 +94,7 @@ class Api::V1::EventsController < ApplicationController
 
   def set_event
     @event = Event.find(params[:id] || params[:event_id])
+    render json: { error: 'Event not found' }, status: :not_found if @event.nil?
   end
 
   def user_not_guest_check

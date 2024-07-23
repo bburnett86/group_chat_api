@@ -44,39 +44,10 @@ class ClubsControllerTest < ActionDispatch::IntegrationTest
     assert_response 204
   end
 
-  test "should get accepted_members" do
-    get accepted_members_api_v1_club_url(@club), as: :json
-    assert_response :success
-  end
-
-  test "should get pending_members" do
-    get pending_members_api_v1_club_url(@club), as: :json
-    assert_response :success
-  end
-
-  test "should get rejected_members" do
-    get rejected_members_api_v1_club_url(@club), as: :json
-    assert_response :success
-  end
-
-  test "should get admins" do
-    get admins_api_v1_club_url(@club), as: :json
-    assert_response :success
-  end
-
-  test "should get superadmins" do
-    get superadmins_api_v1_club_url(@club), as: :json
-    assert_response :success
-  end
-
-  test "should get members" do
-    get members_api_v1_club_url(@club), as: :json
-    assert_response :success
-  end
   test "should bulk invite members" do
     invites = { members: [{ user_id: users(:two).id, club_id: @club.id }] }
     assert_difference('@club.participants.count', 1) do 
-      post bulk_invite_members_api_v1_clubs_url, params: invites
+      post invite_members_api_v1_club_bulk_index_url(@club), params: invites
     end
     assert_response :success
     assert_not_nil response
@@ -89,7 +60,7 @@ class ClubsControllerTest < ActionDispatch::IntegrationTest
       { user_id: @user_three.id, role: 'ADMIN', club_id: @club.id },
       { user_id: @user_two.id, role: 'ADMIN', club_id: @club.id }
     ]
-    patch bulk_role_updates_api_v1_clubs_url, params: { users: users }
+    patch role_updates_api_v1_club_bulk_index_url(@club), params: { users: users }
     assert_response :success
     json_response = JSON.parse(response.body)
     assert_equal 'Roles updated successfully', json_response["message"]

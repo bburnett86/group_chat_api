@@ -15,11 +15,16 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   test 'should get index' do
     get api_v1_users_url
     assert_response :success
+    json_response = JSON.parse(response.body)
+    assert(json_response.all? { |user| user.keys.sort == %w[active avatar_url bio email id role show_email username].sort })
   end
 
   test 'should show user' do
     get api_v1_user_url(@user)
     assert_response :success
+    json_response = JSON.parse(response.body)
+    assert_equal @user.id, json_response['id']
+    assert json_response.keys.sort == %w[active avatar_url bio blocked_users clubs email events followed_by_users following_users id posts show_email username].sort
   end
 
   test 'should update user' do
@@ -80,9 +85,12 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'admin', @following_user.role
   end
 
-  test 'should show current_user' do
-    get current_user_info_api_v1_users_url(@user)
+  test 'should get current user info' do
+    get current_user_info_api_v1_users_url
     assert_response :success
+    json_response = JSON.parse(response.body)
+    assert_equal @user.id, json_response['id']
+    assert json_response.keys.sort == %w[active avatar_url bio blocked_by_users blocked_users clubs email events followed_by_users following_users id posts show_email username].sort
   end
 
 end

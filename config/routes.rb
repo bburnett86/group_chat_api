@@ -50,16 +50,6 @@ Rails.application.routes.draw do
         collection do
           patch :deactivate_past_events
         end
-        member do
-          get 'pending_guests'
-          get 'going_guests'
-          get 'not_going_guests'
-          get 'maybe_guests'
-          get 'all_guests'
-          get 'hosts'
-          get 'organizers'
-        end
-        # Custom routes for bulk actions under a specific event
         resources :bulk, only: [], controller: 'events' do
           collection do
             post :invite_guests
@@ -68,14 +58,6 @@ Rails.application.routes.draw do
         end
       end
       resources :clubs do
-        member do
-          get 'accepted_members'
-          get 'pending_members'
-          get 'rejected_members'
-          get 'admins'
-          get 'superadmins'
-          get 'members'
-        end
         resources :bulk, only: [], controller: 'clubs' do
           collection do
             post :invite_members
