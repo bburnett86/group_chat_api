@@ -27,6 +27,7 @@ Rails.application.routes.draw do
   # Defines routes for the API
   namespace :api do
     namespace :v1 do
+      post 'tokens/verify', to: 'tokens#verify'
       resources :users, only: %i[index show update] do
         collection do
           patch :admin_update_role_bulk
