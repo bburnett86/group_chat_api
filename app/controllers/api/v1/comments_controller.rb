@@ -22,8 +22,7 @@ class Api::V1::CommentsController < ApplicationController
   end
 
   def destroy
-    @comment.destroy
-    head :no_content
+		@comment.destroy
   end
 
   private
@@ -31,6 +30,8 @@ class Api::V1::CommentsController < ApplicationController
 	def set_comment
 		@post = Post.find(params[:post_id])
 		@comment = @post.comments.find(params[:id])
+		render json: { error: 'Post not found' }, status: :not_found if @post.nil?
+		render json: { error: 'Comment not found' }, status: :not_found if @comment.nil?
 	end
 
 	def comment_params

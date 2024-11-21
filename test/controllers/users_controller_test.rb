@@ -15,11 +15,16 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   test 'should get index' do
     get api_v1_users_url
     assert_response :success
+    json_response = JSON.parse(response.body)
+    assert(json_response.all? { |user| user.keys.sort == %w[active avatar_url bio email id role show_email username].sort })
   end
 
   test 'should show user' do
     get api_v1_user_url(@user)
     assert_response :success
+    json_response = JSON.parse(response.body)
+    assert_equal @user.id, json_response['id']
+    assert json_response.keys.sort == %w[active avatar_url bio blocked_users clubs email events followed_by_users following_users id posts show_email username].sort
   end
 
   test 'should update user' do
@@ -80,49 +85,12 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'admin', @following_user.role
   end
 
-  test 'should get following users' do
-    get following_api_v1_user_url(@user)
+  test 'should get current user info' do
+    get current_user_info_api_v1_users_url
     assert_response :success
-    assert_equal @user.following_users.to_json, @response.body
-  end
-
-  test 'should get followed by users' do
-    get followers_api_v1_user_url(@user)
-    assert_response :success
-    assert_equal @user.followed_by_users.to_json, @response.body
-  end
-
-  test "should get user's events" do
-    get events_api_v1_user_url(@user)
-    assert_response :success
-
     json_response = JSON.parse(response.body)
-    assert_equal @user.events.count, json_response.count
-    json_response.each do |event|
-      assert @user.events.find_by(id: event["id"])
-    end
-  end
-
-  test "should get user's clubs" do
-    get clubs_api_v1_user_url(@user)
-    assert_response :success
-
-    json_response = JSON.parse(response.body)
-    assert_equal @user.clubs.count, json_response.count
-    json_response.each do |club|
-      assert @user.clubs.find_by(id: club["id"])
-    end
-  end
-
-  test "should get user's posts" do
-    get posts_api_v1_user_url(@user)
-    assert_response :success
-  
-    json_response = JSON.parse(@response.body)
-    assert_equal @user.posts.count, json_response.count
-    json_response.each do |post|
-      assert @user.posts.find_by(id: post["id"])
-    end
+    assert_equal @user.id, json_response['id']
+    assert json_response.keys.sort == %w[active avatar_url bio blocked_by_users blocked_users clubs email events followed_by_users following_users id posts show_email username].sort
   end
 
 end

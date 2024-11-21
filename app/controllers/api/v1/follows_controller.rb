@@ -20,6 +20,7 @@ class Api::V1::FollowsController < ApplicationController
 
   def set_follow
     @follow = Follow.find_by!(follow_params)
+    render json: { error: 'Follow not found' }, status: :not_found if @follow.nil?
   end
 
   def follow_params

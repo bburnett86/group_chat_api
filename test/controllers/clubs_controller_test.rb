@@ -14,6 +14,9 @@ class ClubsControllerTest < ActionDispatch::IntegrationTest
   test "should get index" do
     get api_v1_clubs_url, as: :json
     assert_response :success
+    json_response = JSON.parse(response.body)
+    expected_keys = ["about_us", "id", "name", "public"].sort
+    assert_equal expected_keys, json_response.first.keys.sort
   end
 
   test "should create club" do
@@ -27,6 +30,14 @@ class ClubsControllerTest < ActionDispatch::IntegrationTest
   test "should show club" do
     get api_v1_club_url(@club), as: :json
     assert_response :success
+    json_response = JSON.parse(response.body)
+    assert_not_nil json_response["posts"]
+    assert_not_nil json_response["accepted_members"]
+    assert_not_nil json_response["pending_members"]
+    assert_not_nil json_response["rejected_members"]
+    assert_not_nil json_response["admins"]
+    assert_not_nil json_response["superadmins"]
+    assert_not_nil json_response["members"]
   end
 
   test "should update club" do
@@ -44,44 +55,34 @@ class ClubsControllerTest < ActionDispatch::IntegrationTest
     assert_response 204
   end
 
-  test "should get accepted_members" do
-    get accepted_members_api_v1_club_url(@club), as: :json
-    assert_response :success
-  end
-
-  test "should get pending_members" do
-    get pending_members_api_v1_club_url(@club), as: :json
-    assert_response :success
-  end
-
-  test "should get rejected_members" do
-    get rejected_members_api_v1_club_url(@club), as: :json
-    assert_response :success
-  end
-
-  test "should get admins" do
-    get admins_api_v1_club_url(@club), as: :json
-    assert_response :success
-  end
-
-  test "should get superadmins" do
-    get superadmins_api_v1_club_url(@club), as: :json
-    assert_response :success
-  end
-
-  test "should get members" do
-    get members_api_v1_club_url(@club), as: :json
-    assert_response :success
-  end
-  test "should bulk invite members" do
-    invites = { members: [{ user_id: users(:two).id, club_id: @club.id }] }
+  test "should invite a single member" do
+    invites = { members: [{ user_id: @user_two.id, club_id: @club.id }] }
     assert_difference('@club.participants.count', 1) do 
-      post bulk_invite_members_api_v1_clubs_url, params: invites
+      post invite_members_api_v1_club_bulk_index_url(@club), params: invites, as: :json
     end
     assert_response :success
-    assert_not_nil response
     json_response = JSON.parse(response.body)
-    assert_equal "1 Member invited successfully", json_response["message"]  
+    assert_equal "1 Member invited successfully", json_response["message"]
+  end
+  
+  test "should invite multiple members" do
+    invites = { members: [{ user_id: @user_two.id, club_id: @club.id }, { user_id: @user_three.id, club_id: @club.id }] }
+    assert_difference('@club.participants.count', 2) do 
+      post invite_members_api_v1_club_bulk_index_url(@club), params: invites, as: :json
+    end
+    assert_response :success
+    json_response = JSON.parse(response.body)
+    assert_equal "2 Members invited successfully", json_response["message"]
+  end
+  
+  test "should not invite members if none provided" do
+    invites = { members: [] }
+    assert_no_difference('@club.participants.count') do 
+      post invite_members_api_v1_club_bulk_index_url(@club), params: invites, as: :json
+    end
+    assert_response :unprocessable_entity
+    json_response = JSON.parse(response.body)
+    assert_equal "No members were invited", json_response["error"]
   end
 
   test 'should update multiple user roles' do
@@ -89,7 +90,7 @@ class ClubsControllerTest < ActionDispatch::IntegrationTest
       { user_id: @user_three.id, role: 'ADMIN', club_id: @club.id },
       { user_id: @user_two.id, role: 'ADMIN', club_id: @club.id }
     ]
-    patch bulk_role_updates_api_v1_clubs_url, params: { users: users }
+    patch role_updates_api_v1_club_bulk_index_url(@club), params: { users: users }
     assert_response :success
     json_response = JSON.parse(response.body)
     assert_equal 'Roles updated successfully', json_response["message"]

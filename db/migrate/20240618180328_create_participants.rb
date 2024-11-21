@@ -12,5 +12,9 @@ class CreateParticipants < ActiveRecord::Migration[7.1]
 
     add_index :participants, [:participable_type, :participable_id], name: "index_participants_on_participable_type_and_id"
     add_index :participants, :user_id, name: "index_participants_on_user_id"
+    add_index :participants, :status, name: "index_participants_on_status"
+    add_index :participants, :role, name: "index_participants_on_role"
+    
+    add_index :participants, [:user_id, :participable_type, :participable_id], unique: true, name: "index_participants_on_user_and_participable_unique"
   end
 end

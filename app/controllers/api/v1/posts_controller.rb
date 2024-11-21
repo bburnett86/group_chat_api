@@ -5,25 +5,59 @@ class Api::V1::PostsController < ApplicationController
   before_action :authorize_user!, only: [:update, :destroy]
 
   def index
-    posts = Post.all
-    render json: posts
+    posts = Post.includes(:user, :likes, :comments).all
+    render json: posts.as_json(include: {
+      user: { only: :username },
+      likes: { only: :id }, 
+      comments: {
+        only: [:id, :description],
+        include: {
+          likes: { only: :id } 
+        }
+      },
+      postable: { only: [:id, :type] }
+    })
   end
 
   def show
-    render json: @post
+    @post = Post.includes(:user, :likes, :comments).find(params[:id])
+    render json: @post.as_json(include: {
+      user: { only: :username },
+      likes: { only: :id },
+      comments: {
+        only: [:id, :description],
+        include: {
+          likes: { only: :id } 
+        }
+      },
+      postable: { only: [:id, :type] }
+    })
   end
 
   def create
-    post = current_user.posts.new(post_params)
+    # Extract postable_type and postable_id from params
+    postable_type = post_params[:postable_type].constantize
+    postable_id = post_params[:postable_id]
+  
+    # Find the postable entity
+    postable = postable_type.find(postable_id)
+  
+    # Build the post associated with the postable entity
+    post = postable.posts.build(post_params.merge(user: current_user))
+  
     if post.save
-      render json: post
+      render json: post, status: :created
     else
-      render json: { error: 'Could not create post' }, status: :bad_request
+      render json: { error: 'Could not create post', details: post.errors.full_messages }, status: :unprocessable_entity
     end
+    rescue NameError
+      render json: { error: 'Invalid postable_type provided' }, status: :bad_request
+    rescue ActiveRecord::RecordNotFound => e
+      render json: { error: e.message }, status: :not_found
   end
 
   def update
-    @post.update!(post_params)
+    @post.update!(update_post_parms)
     render json: @post
   end
 
@@ -37,6 +71,7 @@ class Api::V1::PostsController < ApplicationController
 
   def set_post
     @post = Post.find(params[:id])
+    render json: { error: 'Post not found' }, status: :not_found if @post.nil?
   end
 
 	def authorize_user!
@@ -45,7 +80,11 @@ class Api::V1::PostsController < ApplicationController
 		end
 	end
 
+  def update_post_parms
+    params.require(:post).permit(:description, :close_friends)
+  end
+
   def post_params
-    params.require(:post).permit(:description, :close_friends, :post_type)
+    params.require(:post).permit(:description, :close_friends, :postable_id, :postable_type)
   end
 end

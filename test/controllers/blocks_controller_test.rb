@@ -17,6 +17,8 @@ class BlocksControllerTest < ActionDispatch::IntegrationTest
 	test 'should get index' do
 		get api_v1_user_blocks_url(@user)
 		assert_response :success
+    json_response = JSON.parse(response.body)
+    assert(json_response.all? { |block| block.keys.sort == ["id", "username"].sort })
 	end
 
   test 'should not create block if user is already blocked' do

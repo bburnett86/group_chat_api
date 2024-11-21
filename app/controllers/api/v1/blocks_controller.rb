@@ -2,9 +2,10 @@ class Api::V1::BlocksController < ApplicationController
 	before_action :set_user
   before_action :set_block, only: [:destroy]
 
+  # May not need this route if blocked data is arriving with user
   # GET /api/v1/users/:user_id/blocks
   def index
-    @blocks = @user.blocked_users
+    @blocks = @user.blocked_users.select(:id, :username)
 
     render json: @blocks
   end
@@ -23,6 +24,7 @@ class Api::V1::BlocksController < ApplicationController
   # DELETE /api/v1/users/:user_id/blocks/:id
   def destroy
     @block.destroy
+    render json: { message: 'Block removed' }
   end
 
   private
@@ -33,6 +35,7 @@ class Api::V1::BlocksController < ApplicationController
 
   def set_block
     @block = @user.blocks.find(params[:id])
+    render json: { error: 'Block not found' }, status: :not_found if @block.nil?
   end
 
   def block_params

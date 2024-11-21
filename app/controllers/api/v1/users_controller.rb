@@ -6,15 +6,36 @@
 class Api::V1::UsersController < ApplicationController
   before_action :authenticate_user!
   before_action :check_admin, only: [:index, :activate, :deactivate, :admin_user_update]
-  before_action :set_user, only: [:show, :update, :activate, :deactivate, :admin_user_update, :following, :followers]
+  before_action :set_user, only: [:show, :update, :activate, :deactivate, :admin_user_update]
 
 
   def index
-    render json: User.all
+    render json: User.select(:id, :username, :email, :bio, :avatar_url, :show_email, :active, :role)
   end
 
   def show
-    render json: @user
+    @user = User.eager_load(posts: [:likes, :comments])
+                .where(posts: {postable_type: nil})
+                .find(params[:id])
+    render json: @user.as_json(only: [:id, :username, :email, :bio, :avatar_url, :show_email, :active], include: {
+      followed_by_users: { only: [:id, :username] },
+      following_users: { only: [:id, :username] },
+      events: { only: [:title, :id] },
+      clubs: { only: [:name, :id] },
+      posts: { 
+        only: [:description, :id],
+        include: {
+          likes: { only: :id },
+          comments: {
+            only: [:id, :description],
+            include: {
+              likes: { only: :id } 
+            }
+          },
+        },  
+      },  
+      blocked_users: { only: [:username, :id] }
+    })
   end
 
   def update
@@ -42,25 +63,29 @@ class Api::V1::UsersController < ApplicationController
     render json: { message: 'Roles updated successfully' }
   end
 
-  def following
-    render json: current_user.following_users
-  end
-
-  def followers
-    render json: current_user.followed_by_users
-  end
-
-  def events
-    render json: current_user.events
-  end
-
-  def clubs
-    render json: current_user.clubs
-  end
-
-  def posts
-    render json: current_user.posts
-  end
+  def current_user_info
+    user = User.includes(posts: [:likes, :comments]).find(current_user.id)
+    render json: user.as_json(only: [:id, :username, :email, :bio, :avatar_url, :show_email, :active], include: {
+      followed_by_users: { only: [:id, :username] },
+      following_users: { only: [:id, :username] },
+      events: { only: [:title, :id] },
+      clubs: { only: [:name, :id] },
+      posts: { only: [:description, :id],
+        include: {
+          likes: { only: :id },
+          comments: {
+            only: [:id, :description],
+            include: {
+              likes: { only: :id } 
+            }
+          }
+        },
+      }, 
+      blocked_by_users: { only: [:username, :id] }, 
+      blocked_users: { only: [:username, :id] }
+    })
+    render json: { error: 'Current User is not logged in' }, status: :not_found unless current_user
+end
 
 
   private

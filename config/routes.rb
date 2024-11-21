@@ -27,19 +27,16 @@ Rails.application.routes.draw do
   # Defines routes for the API
   namespace :api do
     namespace :v1 do
+      post 'tokens/verify', to: 'tokens#verify'
       resources :users, only: %i[index show update] do
         collection do
           patch :admin_update_role_bulk
+          get :current_user_info
         end
         member do
           patch 'admin_user_update'
           patch 'activate'
           patch 'deactivate'
-          get 'following'
-          get 'followers'
-          get 'events'
-          get 'clubs'
-          get 'posts'
         end
         resources :blocks, only: %i[index create destroy]
       end
@@ -53,33 +50,21 @@ Rails.application.routes.draw do
       resources :events do
         collection do
           patch :deactivate_past_events
-          post :bulk_invite_guests
-          patch :bulk_role_updates
         end
-        member do
-          get 'pending_guests'
-          get 'going_guests'
-          get 'not_going_guests'
-          get 'maybe_guests'
-          get 'all_guests'
-          get 'hosts'
-          get 'organizers'
+        resources :bulk, only: [], controller: 'events' do
+          collection do
+            post :invite_guests
+            patch :role_updates
+          end
         end
-      end 
+      end
       resources :clubs do
-        collection do
-          post :bulk_invite_members
-          patch :bulk_role_updates
+        resources :bulk, only: [], controller: 'clubs' do
+          collection do
+            post :invite_members
+            patch :role_updates
+          end
         end
-        member do
-          get 'accepted_members'
-          get 'pending_members'
-          get 'rejected_members'
-          get 'admins'
-          get 'superadmins'
-          get 'members'
-        end
-        resources :club_events
       end
     end
   end

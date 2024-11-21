@@ -1,15 +1,13 @@
 class Api::V1::LikesController < ApplicationController
-  before_action :set_likeable
+  before_action :set_likeable, only: [:index, :create]
   before_action :set_like, only: [:destroy]
 
-  # GET /api/v1/posts/:post_id/likes
   def index
     @likes = @likeable.likes
 
     render json: @likes
   end
 
-  # POST /api/v1/posts/:post_id/likes
   def create
     @like = @likeable.likes.new(like_params)
 
@@ -20,19 +18,26 @@ class Api::V1::LikesController < ApplicationController
     end
   end
 
-  # DELETE /api/v1/posts/:post_id/likes/:id
   def destroy
     @like.destroy
   end
 
   private
 
+  # Identify the likeable object (post or comment) and set it
   def set_likeable
-    @likeable = Post.find(params[:post_id]) # Adjust this if you have other likeable types
+    likeable_types = { post_id: Post, comment_id: Comment }
+    likeable_types.each do |param, klass|
+      if params[param]
+        @likeable = klass.find(params[param])
+        break
+      end
+    end
   end
 
   def set_like
     @like = Like.find(params[:id])
+    render json: { error: 'Like not found' }, status: :not_found if @like.nil?      
   end
 
   def like_params

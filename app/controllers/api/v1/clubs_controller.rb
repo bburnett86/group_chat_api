@@ -1,11 +1,11 @@
 class Api::V1::ClubsController < ApplicationController
 	before_action :authenticate_user!
-	before_action :set_club, only: [:show, :update, :destroy, :accepted_members, :pending_members, :rejected_members, :admins, :superadmins, :members]
+	before_action :set_club, only: [:show, :update, :destroy, :invite_members, :role_updates]
 	before_action :user_admin_check, only: [:update]
 	before_action :user_superadmin_check, only: [:destroy]
 
 	def index
-		@clubs = Club.all
+		@clubs = Club.select(:id, :name, :about_us, :public)
 		render json: @clubs
 	end
 
@@ -20,7 +20,34 @@ class Api::V1::ClubsController < ApplicationController
 	end
 
 	def show
-		render json: @club
+    @club = Club.includes(posts: {comments: :user}).find(params[:id])
+    club_details = @club.as_json(
+      include: {
+        posts: {
+          only: [:id, :description],
+          include: {
+            user: { only: [:id, :username] },
+            comments: {
+              only: [:id, :content],
+              include: {
+                user: { only: [:id, :username] }
+              }
+            }
+          }
+        }
+      }
+    )
+
+    custom_member_details = {
+      accepted_members: @club.accepted_members.includes(:user).as_json(only: [:id, :status], include: { user: { only: [:id, :username] }}),
+      pending_members: @club.pending_members.includes(:user).as_json(only: [:id, :status], include: { user: { only: [:id, :username] }}),
+      rejected_members: @club.rejected_members.includes(:user).as_json(only: [:id, :status], include: { user: { only: [:id, :username] }}),
+      admins: @club.admins.includes(:user).as_json(only: [:id, :role], include: { user: { only: [:id, :username] }}),
+      superadmins: @club.superadmins.includes(:user).as_json(only: [:id, :role], include: { user: { only: [:id, :username] }}),
+      members: @club.members.includes(:user).as_json(only: [:id, :role], include: { user: { only: [:id, :username] }})
+    }
+
+    render json: club_details.merge(custom_member_details)
 	end
 
 	def update
@@ -35,35 +62,10 @@ class Api::V1::ClubsController < ApplicationController
 		@club.destroy
 	end
 
-  def accepted_members
-    render json: @club.accepted_members
-  end
-
-  def pending_members
-    render json: @club.pending_members
-  end
-
-  def rejected_members
-    render json: @club.rejected_members
-  end
-
-  def admins
-   render json:  @club.admins
-  end
-
-  def superadmins
-    render json: @club.superadmins
-  end
-
-  def members
-    render json: @club.members
-  end
-
-	def bulk_invite_members
+	def invite_members
     invited_count = 0
     params[:members].each do |member|
-      club = Club.find(member[:club_id])
-      participant = club.participants.build(user_id: member[:user_id], status: 'PENDING')
+      participant = @club.participants.build(user_id: member[:user_id], status: 'PENDING')
       invited_count += 1 if participant && participant.save
     end
 		if invited_count == 1
@@ -75,10 +77,9 @@ class Api::V1::ClubsController < ApplicationController
     end
   end
 
-  def bulk_role_updates
+  def role_updates
     params[:users].each do |user|
-      club = Club.find(user[:club_id])
-      participant = club.participants.find_by(user_id: user[:user_id])
+      participant = @club.participants.find_by(user_id: user[:user_id])
 			if participant && participant.role != user[:role]
 				participant.update!(role: user[:role])
 			end
@@ -89,7 +90,8 @@ class Api::V1::ClubsController < ApplicationController
   private
 
   def set_club
-    @club = Club.find(params[:id])
+    @club = Club.find(params[:id] || params[:club_id])
+    render json: { error: 'Club not found' }, status: :not_found if @club.nil?
   end
 
 	def club_params

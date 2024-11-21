@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_18_180328) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_15_211550) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -21,6 +21,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_18_180328) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["blocked_user_id"], name: "index_blocks_on_blocked_user_id"
+    t.index ["user_id", "blocked_user_id"], name: "index_blocks_on_user_id_and_blocked_user_id", unique: true
     t.index ["user_id"], name: "index_blocks_on_user_id"
   end
 
@@ -30,6 +31,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_18_180328) do
     t.boolean "public"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["id"], name: "index_clubs_on_id_public", where: "(public = true)"
+    t.index ["name"], name: "index_clubs_on_name", unique: true
+    t.index ["public"], name: "index_clubs_on_public"
   end
 
   create_table "comments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -50,6 +54,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_18_180328) do
     t.boolean "active", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["end_time"], name: "index_events_on_end_time"
+    t.index ["id"], name: "index_events_on_id_active", where: "(active = true)"
+    t.index ["start_time", "active"], name: "index_events_on_start_time_and_active"
+    t.index ["start_time"], name: "index_events_on_start_time"
   end
 
   create_table "follows", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -58,6 +66,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_18_180328) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["followed_user_id"], name: "index_follows_on_followed_user_id"
+    t.index ["following_user_id", "followed_user_id"], name: "index_follows_on_following_user_id_and_followed_user_id", unique: true
     t.index ["following_user_id"], name: "index_follows_on_following_user_id"
   end
 
@@ -69,7 +78,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_18_180328) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["likeable_type", "likeable_id"], name: "index_likes_on_likeable"
+    t.index ["likeable_type", "likeable_id"], name: "index_likes_on_likeable_type_and_likeable_id"
     t.index ["liked_id"], name: "index_likes_on_liked_id"
+    t.index ["liker_id", "liked_id", "likeable_type", "likeable_id"], name: "idx_on_liker_id_liked_id_likeable_type_likeable_id_48d6e26558", unique: true
     t.index ["liker_id"], name: "index_likes_on_liker_id"
   end
 
@@ -82,6 +93,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_18_180328) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["participable_type", "participable_id"], name: "index_participants_on_participable_type_and_id"
+    t.index ["role"], name: "index_participants_on_role"
+    t.index ["status"], name: "index_participants_on_status"
+    t.index ["user_id", "participable_type", "participable_id"], name: "index_participants_on_user_and_participable_unique", unique: true
     t.index ["user_id"], name: "index_participants_on_user_id"
   end
 
@@ -89,9 +103,11 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_18_180328) do
     t.string "description", default: ""
     t.uuid "user_id", null: false
     t.boolean "close_friends", default: false
+    t.string "postable_type"
+    t.uuid "postable_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "post_type"
+    t.index ["user_id", "postable_type", "postable_id"], name: "index_posts_on_user_id_and_postable_type_and_postable_id"
     t.index ["user_id"], name: "index_posts_on_user_id"
   end
 
@@ -119,6 +135,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_18_180328) do
     t.datetime "updated_at", null: false
     t.string "jti"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["id"], name: "index_users_on_id_active", where: "(active = true)"
     t.index ["jti"], name: "index_users_on_jti"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true

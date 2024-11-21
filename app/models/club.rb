@@ -6,6 +6,7 @@ class Club < ApplicationRecord
 
   has_many :participants, as: :participable, dependent: :destroy
   has_many :members, through: :participants
+	has_many :posts, as: :postable
 
 	def accepted_members
 		participants.where(status: Participant.statuses[:ACCEPTED])
